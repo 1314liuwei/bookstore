@@ -1,2 +1,40 @@
 # bookstore
 
+## 数据库设计
+- User：用户数据库
+    - ID
+    - UserName
+    - Password
+    - type
+    - CreatedAt
+- Book：书籍数据库
+    - ID
+    - Name
+    - Price
+    - surplus_catch
+    - author
+    - describe
+    - ebook
+    - cover
+    - CreatedAt
+- Category：商品类别
+    - ID
+    - Name
+    - CreatedAt
+- ShoppingCart：购物车
+    - ID
+    - User
+    - Book
+    - amount
+    - UpdateAt
+    - CreatedAt
+- Order：订单
+    - ID
+    - created_time
+    - User
+    - Book
+    - amount
+    - status
+    - CreatedAt
+    - UpdateAt
+
