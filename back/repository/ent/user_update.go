@@ -38,7 +38,7 @@ func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 	return uu
 }
 
-// SetType sets the "type" field.
+// SetType sets the "Type" field.
 func (uu *UserUpdate) SetType(u user.Type) *UserUpdate {
 	uu.mutation.SetType(u)
 	return uu
@@ -113,7 +113,7 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 func (uu *UserUpdate) check() error {
 	if v, ok := uu.mutation.GetType(); ok {
 		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+			return &ValidationError{Name: "Type", err: fmt.Errorf("ent: validator failed for field \"Type\": %w", err)}
 		}
 	}
 	return nil
@@ -189,7 +189,7 @@ func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 	return uuo
 }
 
-// SetType sets the "type" field.
+// SetType sets the "Type" field.
 func (uuo *UserUpdateOne) SetType(u user.Type) *UserUpdateOne {
 	uuo.mutation.SetType(u)
 	return uuo
@@ -271,7 +271,7 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 func (uuo *UserUpdateOne) check() error {
 	if v, ok := uuo.mutation.GetType(); ok {
 		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+			return &ValidationError{Name: "Type", err: fmt.Errorf("ent: validator failed for field \"Type\": %w", err)}
 		}
 	}
 	return nil

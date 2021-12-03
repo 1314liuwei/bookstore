@@ -1,24 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"back/repository"
+	"context"
+	"log"
 )
 
 func main() {
-	engine := gin.New()
+	dataSource := repository.GetDataSource()
+	client := repository.InitDBConnect(dataSource)
+	defer repository.CloseDBConnect()
 
-	engine.GET("/", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{
-			"msg": "Hello",
-		})
-	})
-
-	err := engine.Run()
+	ctx := context.Background()
+	err := client.Schema.Create(ctx)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatalln(err)
 	}
-
 }

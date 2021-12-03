@@ -60,7 +60,7 @@ var (
 	DefaultCreatedAt func() time.Time
 )
 
-// Type defines the type for the "type" enum field.
+// Type defines the type for the "Type" enum field.
 type Type string
 
 // Type values.
@@ -74,12 +74,12 @@ func (_type Type) String() string {
 	return string(_type)
 }
 
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+// TypeValidator is a validator for the "Type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
 	case TypeNormal, TypeVip, TypeAdmin:
 		return nil
 	default:
-		return fmt.Errorf("user: invalid enum value for type field: %q", _type)
+		return fmt.Errorf("user: invalid enum value for Type field: %q", _type)
 	}
 }

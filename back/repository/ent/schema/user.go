@@ -16,7 +16,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("username").Unique(),
 		field.String("password"),
-		field.Enum("type").Values("normal", "vip", "admin"),
+		field.Enum("Type").Values("normal", "vip", "admin"),
 		field.Time("created_at").Default(time.Now).Immutable(),
 	}
 }

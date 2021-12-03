@@ -32,7 +32,7 @@ func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	return uc
 }
 
-// SetType sets the "type" field.
+// SetType sets the "Type" field.
 func (uc *UserCreate) SetType(u user.Type) *UserCreate {
 	uc.mutation.SetType(u)
 	return uc
@@ -138,11 +138,11 @@ func (uc *UserCreate) check() error {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "password"`)}
 	}
 	if _, ok := uc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "type"`)}
+		return &ValidationError{Name: "Type", err: errors.New(`ent: missing required field "Type"`)}
 	}
 	if v, ok := uc.mutation.GetType(); ok {
 		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "type": %w`, err)}
+			return &ValidationError{Name: "Type", err: fmt.Errorf(`ent: validator failed for field "Type": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {

@@ -335,21 +335,21 @@ func PasswordContainsFold(v string) predicate.User {
 	})
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
+// TypeEQ applies the EQ predicate on the "Type" field.
 func TypeEQ(v Type) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldType), v))
 	})
 }
 
-// TypeNEQ applies the NEQ predicate on the "type" field.
+// TypeNEQ applies the NEQ predicate on the "Type" field.
 func TypeNEQ(v Type) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldType), v))
 	})
 }
 
-// TypeIn applies the In predicate on the "type" field.
+// TypeIn applies the In predicate on the "Type" field.
 func TypeIn(vs ...Type) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -366,7 +366,7 @@ func TypeIn(vs ...Type) predicate.User {
 	})
 }
 
-// TypeNotIn applies the NotIn predicate on the "type" field.
+// TypeNotIn applies the NotIn predicate on the "Type" field.
 func TypeNotIn(vs ...Type) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {

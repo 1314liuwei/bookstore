@@ -2443,7 +2443,7 @@ type UserMutation struct {
 	id            *int
 	username      *string
 	password      *string
-	_type         *user.Type
+	_Type         *user.Type
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
@@ -2602,21 +2602,21 @@ func (m *UserMutation) ResetPassword() {
 	m.password = nil
 }
 
-// SetType sets the "type" field.
+// SetType sets the "Type" field.
 func (m *UserMutation) SetType(u user.Type) {
-	m._type = &u
+	m._Type = &u
 }
 
-// GetType returns the value of the "type" field in the mutation.
+// GetType returns the value of the "Type" field in the mutation.
 func (m *UserMutation) GetType() (r user.Type, exists bool) {
-	v := m._type
+	v := m._Type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldType returns the old "type" field's value of the User entity.
+// OldType returns the old "Type" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *UserMutation) OldType(ctx context.Context) (v user.Type, err error) {
@@ -2633,9 +2633,9 @@ func (m *UserMutation) OldType(ctx context.Context) (v user.Type, err error) {
 	return oldValue.Type, nil
 }
 
-// ResetType resets all changes to the "type" field.
+// ResetType resets all changes to the "Type" field.
 func (m *UserMutation) ResetType() {
-	m._type = nil
+	m._Type = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2700,7 +2700,7 @@ func (m *UserMutation) Fields() []string {
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
 	}
-	if m._type != nil {
+	if m._Type != nil {
 		fields = append(fields, user.FieldType)
 	}
 	if m.created_at != nil {

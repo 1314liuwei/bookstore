@@ -20,8 +20,8 @@ type User struct {
 	Username string `json:"username,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
-	// Type holds the value of the "type" field.
-	Type user.Type `json:"type,omitempty"`
+	// Type holds the value of the "Type" field.
+	Type user.Type `json:"Type,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt          time.Time `json:"created_at,omitempty"`
 	order_user         *int
@@ -78,7 +78,7 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			}
 		case user.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
+				return fmt.Errorf("unexpected type %T for field Type", values[i])
 			} else if value.Valid {
 				u.Type = user.Type(value.String)
 			}
@@ -134,7 +134,7 @@ func (u *User) String() string {
 	builder.WriteString(u.Username)
 	builder.WriteString(", password=")
 	builder.WriteString(u.Password)
-	builder.WriteString(", type=")
+	builder.WriteString(", Type=")
 	builder.WriteString(fmt.Sprintf("%v", u.Type))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
