@@ -8,7 +8,6 @@ import (
 	"back/repository/ent/shoppingcart"
 	"back/repository/ent/user"
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -30,6 +29,7 @@ type ShoppingCartQuery struct {
 	// eager-loading edges.
 	withBook *BookQuery
 	withUser *UserQuery
+	withFKs  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -80,7 +80,7 @@ func (scq *ShoppingCartQuery) QueryBook() *BookQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(shoppingcart.Table, shoppingcart.FieldID, selector),
 			sqlgraph.To(book.Table, book.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, shoppingcart.BookTable, shoppingcart.BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, shoppingcart.BookTable, shoppingcart.BookColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(scq.driver.Dialect(), step)
 		return fromU, nil
@@ -102,7 +102,7 @@ func (scq *ShoppingCartQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(shoppingcart.Table, shoppingcart.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, shoppingcart.UserTable, shoppingcart.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, shoppingcart.UserTable, shoppingcart.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(scq.driver.Dialect(), step)
 		return fromU, nil
@@ -385,12 +385,19 @@ func (scq *ShoppingCartQuery) prepareQuery(ctx context.Context) error {
 func (scq *ShoppingCartQuery) sqlAll(ctx context.Context) ([]*ShoppingCart, error) {
 	var (
 		nodes       = []*ShoppingCart{}
+		withFKs     = scq.withFKs
 		_spec       = scq.querySpec()
 		loadedTypes = [2]bool{
 			scq.withBook != nil,
 			scq.withUser != nil,
 		}
 	)
+	if scq.withBook != nil || scq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, shoppingcart.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &ShoppingCart{config: scq.config}
 		nodes = append(nodes, node)
@@ -412,60 +419,60 @@ func (scq *ShoppingCartQuery) sqlAll(ctx context.Context) ([]*ShoppingCart, erro
 	}
 
 	if query := scq.withBook; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ShoppingCart)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ShoppingCart)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Book = []*Book{}
+			if nodes[i].book_shopping_cart == nil {
+				continue
+			}
+			fk := *nodes[i].book_shopping_cart
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.withFKs = true
-		query.Where(predicate.Book(func(s *sql.Selector) {
-			s.Where(sql.InValues(shoppingcart.BookColumn, fks...))
-		}))
+		query.Where(book.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.shopping_cart_book
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "shopping_cart_book" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "shopping_cart_book" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "book_shopping_cart" returned %v`, n.ID)
 			}
-			node.Edges.Book = append(node.Edges.Book, n)
+			for i := range nodes {
+				nodes[i].Edges.Book = n
+			}
 		}
 	}
 
 	if query := scq.withUser; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ShoppingCart)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ShoppingCart)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.User = []*User{}
+			if nodes[i].user_shopping_cart == nil {
+				continue
+			}
+			fk := *nodes[i].user_shopping_cart
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.withFKs = true
-		query.Where(predicate.User(func(s *sql.Selector) {
-			s.Where(sql.InValues(shoppingcart.UserColumn, fks...))
-		}))
+		query.Where(user.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.shopping_cart_user
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "shopping_cart_user" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "shopping_cart_user" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "user_shopping_cart" returned %v`, n.ID)
 			}
-			node.Edges.User = append(node.Edges.User, n)
+			for i := range nodes {
+				nodes[i].Edges.User = n
+			}
 		}
 	}
 

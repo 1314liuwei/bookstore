@@ -3,7 +3,9 @@
 package ent
 
 import (
+	"back/repository/ent/book"
 	"back/repository/ent/order"
+	"back/repository/ent/user"
 	"fmt"
 	"strings"
 	"time"
@@ -26,33 +28,45 @@ type Order struct {
 	UpdateAt time.Time `json:"update_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderQuery when eager-loading is set.
-	Edges OrderEdges `json:"edges"`
+	Edges      OrderEdges `json:"edges"`
+	book_order *int
+	user_order *int
 }
 
 // OrderEdges holds the relations/edges for other nodes in the graph.
 type OrderEdges struct {
 	// User holds the value of the user edge.
-	User []*User `json:"user,omitempty"`
+	User *User `json:"user,omitempty"`
 	// Book holds the value of the book edge.
-	Book []*Book `json:"book,omitempty"`
+	Book *Book `json:"book,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e OrderEdges) UserOrErr() ([]*User, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrderEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
+		if e.User == nil {
+			// The edge user was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
 		return e.User, nil
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }
 
 // BookOrErr returns the Book value or an error if the edge
-// was not loaded in eager-loading.
-func (e OrderEdges) BookOrErr() ([]*Book, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrderEdges) BookOrErr() (*Book, error) {
 	if e.loadedTypes[1] {
+		if e.Book == nil {
+			// The edge book was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: book.Label}
+		}
 		return e.Book, nil
 	}
 	return nil, &NotLoadedError{edge: "book"}
@@ -69,6 +83,10 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullString)
 		case order.FieldCreatedAt, order.FieldUpdateAt:
 			values[i] = new(sql.NullTime)
+		case order.ForeignKeys[0]: // book_order
+			values[i] = new(sql.NullInt64)
+		case order.ForeignKeys[1]: // user_order
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
 		}
@@ -113,6 +131,20 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
 				o.UpdateAt = value.Time
+			}
+		case order.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field book_order", value)
+			} else if value.Valid {
+				o.book_order = new(int)
+				*o.book_order = int(value.Int64)
+			}
+		case order.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_order", value)
+			} else if value.Valid {
+				o.user_order = new(int)
+				*o.user_order = int(value.Int64)
 			}
 		}
 	}

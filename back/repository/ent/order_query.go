@@ -8,7 +8,6 @@ import (
 	"back/repository/ent/predicate"
 	"back/repository/ent/user"
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -30,6 +29,7 @@ type OrderQuery struct {
 	// eager-loading edges.
 	withUser *UserQuery
 	withBook *BookQuery
+	withFKs  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -80,7 +80,7 @@ func (oq *OrderQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(order.Table, order.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.UserTable, order.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, order.UserTable, order.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -102,7 +102,7 @@ func (oq *OrderQuery) QueryBook() *BookQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(order.Table, order.FieldID, selector),
 			sqlgraph.To(book.Table, book.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.BookTable, order.BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, order.BookTable, order.BookColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -385,12 +385,19 @@ func (oq *OrderQuery) prepareQuery(ctx context.Context) error {
 func (oq *OrderQuery) sqlAll(ctx context.Context) ([]*Order, error) {
 	var (
 		nodes       = []*Order{}
+		withFKs     = oq.withFKs
 		_spec       = oq.querySpec()
 		loadedTypes = [2]bool{
 			oq.withUser != nil,
 			oq.withBook != nil,
 		}
 	)
+	if oq.withUser != nil || oq.withBook != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, order.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Order{config: oq.config}
 		nodes = append(nodes, node)
@@ -412,60 +419,60 @@ func (oq *OrderQuery) sqlAll(ctx context.Context) ([]*Order, error) {
 	}
 
 	if query := oq.withUser; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Order)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Order)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.User = []*User{}
+			if nodes[i].user_order == nil {
+				continue
+			}
+			fk := *nodes[i].user_order
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.withFKs = true
-		query.Where(predicate.User(func(s *sql.Selector) {
-			s.Where(sql.InValues(order.UserColumn, fks...))
-		}))
+		query.Where(user.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.order_user
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "order_user" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "order_user" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "user_order" returned %v`, n.ID)
 			}
-			node.Edges.User = append(node.Edges.User, n)
+			for i := range nodes {
+				nodes[i].Edges.User = n
+			}
 		}
 	}
 
 	if query := oq.withBook; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Order)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Order)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Book = []*Book{}
+			if nodes[i].book_order == nil {
+				continue
+			}
+			fk := *nodes[i].book_order
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		query.withFKs = true
-		query.Where(predicate.Book(func(s *sql.Selector) {
-			s.Where(sql.InValues(order.BookColumn, fks...))
-		}))
+		query.Where(book.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.order_book
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "order_book" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "order_book" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "book_order" returned %v`, n.ID)
 			}
-			node.Edges.Book = append(node.Edges.Book, n)
+			for i := range nodes {
+				nodes[i].Edges.Book = n
+			}
 		}
 	}
 

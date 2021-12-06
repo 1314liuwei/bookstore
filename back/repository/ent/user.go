@@ -23,9 +23,39 @@ type User struct {
 	// Type holds the value of the "Type" field.
 	Type user.Type `json:"Type,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt          time.Time `json:"created_at,omitempty"`
-	order_user         *int
-	shopping_cart_user *int
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges UserEdges `json:"edges"`
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Order holds the value of the order edge.
+	Order []*Order `json:"order,omitempty"`
+	// ShoppingCart holds the value of the shopping_cart edge.
+	ShoppingCart []*ShoppingCart `json:"shopping_cart,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// OrderOrErr returns the Order value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OrderOrErr() ([]*Order, error) {
+	if e.loadedTypes[0] {
+		return e.Order, nil
+	}
+	return nil, &NotLoadedError{edge: "order"}
+}
+
+// ShoppingCartOrErr returns the ShoppingCart value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ShoppingCartOrErr() ([]*ShoppingCart, error) {
+	if e.loadedTypes[1] {
+		return e.ShoppingCart, nil
+	}
+	return nil, &NotLoadedError{edge: "shopping_cart"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,10 +69,6 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case user.ForeignKeys[0]: // order_user
-			values[i] = new(sql.NullInt64)
-		case user.ForeignKeys[1]: // shopping_cart_user
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
 		}
@@ -88,23 +114,19 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.CreatedAt = value.Time
 			}
-		case user.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field order_user", value)
-			} else if value.Valid {
-				u.order_user = new(int)
-				*u.order_user = int(value.Int64)
-			}
-		case user.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field shopping_cart_user", value)
-			} else if value.Valid {
-				u.shopping_cart_user = new(int)
-				*u.shopping_cart_user = int(value.Int64)
-			}
 		}
 	}
 	return nil
+}
+
+// QueryOrder queries the "order" edge of the User entity.
+func (u *User) QueryOrder() *OrderQuery {
+	return (&UserClient{config: u.config}).QueryOrder(u)
+}
+
+// QueryShoppingCart queries the "shopping_cart" edge of the User entity.
+func (u *User) QueryShoppingCart() *ShoppingCartQuery {
+	return (&UserClient{config: u.config}).QueryShoppingCart(u)
 }
 
 // Update returns a builder for updating this User.

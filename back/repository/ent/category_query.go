@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"back/repository/ent/book"
 	"back/repository/ent/category"
 	"back/repository/ent/predicate"
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -24,7 +26,8 @@ type CategoryQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Category
-	withFKs    bool
+	// eager-loading edges.
+	withBook *BookQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,6 +62,28 @@ func (cq *CategoryQuery) Unique(unique bool) *CategoryQuery {
 func (cq *CategoryQuery) Order(o ...OrderFunc) *CategoryQuery {
 	cq.order = append(cq.order, o...)
 	return cq
+}
+
+// QueryBook chains the current query on the "book" edge.
+func (cq *CategoryQuery) QueryBook() *BookQuery {
+	query := &BookQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, selector),
+			sqlgraph.To(book.Table, book.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, category.BookTable, category.BookColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Category entity from the query.
@@ -242,10 +267,22 @@ func (cq *CategoryQuery) Clone() *CategoryQuery {
 		offset:     cq.offset,
 		order:      append([]OrderFunc{}, cq.order...),
 		predicates: append([]predicate.Category{}, cq.predicates...),
+		withBook:   cq.withBook.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
 	}
+}
+
+// WithBook tells the query-builder to eager-load the nodes that are connected to
+// the "book" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CategoryQuery) WithBook(opts ...func(*BookQuery)) *CategoryQuery {
+	query := &BookQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withBook = query
+	return cq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -311,13 +348,12 @@ func (cq *CategoryQuery) prepareQuery(ctx context.Context) error {
 
 func (cq *CategoryQuery) sqlAll(ctx context.Context) ([]*Category, error) {
 	var (
-		nodes   = []*Category{}
-		withFKs = cq.withFKs
-		_spec   = cq.querySpec()
+		nodes       = []*Category{}
+		_spec       = cq.querySpec()
+		loadedTypes = [1]bool{
+			cq.withBook != nil,
+		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, category.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Category{config: cq.config}
 		nodes = append(nodes, node)
@@ -328,6 +364,7 @@ func (cq *CategoryQuery) sqlAll(ctx context.Context) ([]*Category, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, cq.driver, _spec); err != nil {
@@ -336,6 +373,36 @@ func (cq *CategoryQuery) sqlAll(ctx context.Context) ([]*Category, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := cq.withBook; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Category)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Book = []*Book{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Book(func(s *sql.Selector) {
+			s.Where(sql.InValues(category.BookColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.category_book
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "category_book" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "category_book" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Book = append(node.Edges.Book, n)
+		}
+	}
+
 	return nodes, nil
 }
 

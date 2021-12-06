@@ -5,6 +5,8 @@ package ent
 import (
 	"back/repository/ent/book"
 	"back/repository/ent/category"
+	"back/repository/ent/order"
+	"back/repository/ent/shoppingcart"
 	"context"
 	"errors"
 	"fmt"
@@ -27,27 +29,15 @@ func (bc *BookCreate) SetName(s string) *BookCreate {
 	return bc
 }
 
-// SetPrice sets the "price" field.
-func (bc *BookCreate) SetPrice(i int) *BookCreate {
-	bc.mutation.SetPrice(i)
-	return bc
-}
-
-// SetSurplusCatch sets the "surplus_catch" field.
-func (bc *BookCreate) SetSurplusCatch(i int) *BookCreate {
-	bc.mutation.SetSurplusCatch(i)
-	return bc
-}
-
 // SetAuthor sets the "author" field.
 func (bc *BookCreate) SetAuthor(s string) *BookCreate {
 	bc.mutation.SetAuthor(s)
 	return bc
 }
 
-// SetDescribe sets the "describe" field.
-func (bc *BookCreate) SetDescribe(s string) *BookCreate {
-	bc.mutation.SetDescribe(s)
+// SetDescription sets the "description" field.
+func (bc *BookCreate) SetDescription(s string) *BookCreate {
+	bc.mutation.SetDescription(s)
 	return bc
 }
 
@@ -77,19 +67,53 @@ func (bc *BookCreate) SetNillableCreatedAt(t *time.Time) *BookCreate {
 	return bc
 }
 
-// AddCategoryIDs adds the "category" edge to the Category entity by IDs.
-func (bc *BookCreate) AddCategoryIDs(ids ...int) *BookCreate {
-	bc.mutation.AddCategoryIDs(ids...)
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (bc *BookCreate) SetCategoryID(id int) *BookCreate {
+	bc.mutation.SetCategoryID(id)
 	return bc
 }
 
-// AddCategory adds the "category" edges to the Category entity.
-func (bc *BookCreate) AddCategory(c ...*Category) *BookCreate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
+// SetNillableCategoryID sets the "category" edge to the Category entity by ID if the given value is not nil.
+func (bc *BookCreate) SetNillableCategoryID(id *int) *BookCreate {
+	if id != nil {
+		bc = bc.SetCategoryID(*id)
 	}
-	return bc.AddCategoryIDs(ids...)
+	return bc
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (bc *BookCreate) SetCategory(c *Category) *BookCreate {
+	return bc.SetCategoryID(c.ID)
+}
+
+// AddOrderIDs adds the "order" edge to the Order entity by IDs.
+func (bc *BookCreate) AddOrderIDs(ids ...int) *BookCreate {
+	bc.mutation.AddOrderIDs(ids...)
+	return bc
+}
+
+// AddOrder adds the "order" edges to the Order entity.
+func (bc *BookCreate) AddOrder(o ...*Order) *BookCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return bc.AddOrderIDs(ids...)
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (bc *BookCreate) AddShoppingCartIDs(ids ...int) *BookCreate {
+	bc.mutation.AddShoppingCartIDs(ids...)
+	return bc
+}
+
+// AddShoppingCart adds the "shopping_cart" edges to the ShoppingCart entity.
+func (bc *BookCreate) AddShoppingCart(s ...*ShoppingCart) *BookCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return bc.AddShoppingCartIDs(ids...)
 }
 
 // Mutation returns the BookMutation object of the builder.
@@ -174,17 +198,11 @@ func (bc *BookCreate) check() error {
 	if _, ok := bc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "name"`)}
 	}
-	if _, ok := bc.mutation.Price(); !ok {
-		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "price"`)}
-	}
-	if _, ok := bc.mutation.SurplusCatch(); !ok {
-		return &ValidationError{Name: "surplus_catch", err: errors.New(`ent: missing required field "surplus_catch"`)}
-	}
 	if _, ok := bc.mutation.Author(); !ok {
 		return &ValidationError{Name: "author", err: errors.New(`ent: missing required field "author"`)}
 	}
-	if _, ok := bc.mutation.Describe(); !ok {
-		return &ValidationError{Name: "describe", err: errors.New(`ent: missing required field "describe"`)}
+	if _, ok := bc.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "description"`)}
 	}
 	if _, ok := bc.mutation.Ebook(); !ok {
 		return &ValidationError{Name: "ebook", err: errors.New(`ent: missing required field "ebook"`)}
@@ -230,22 +248,6 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 		})
 		_node.Name = value
 	}
-	if value, ok := bc.mutation.Price(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldPrice,
-		})
-		_node.Price = value
-	}
-	if value, ok := bc.mutation.SurplusCatch(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldSurplusCatch,
-		})
-		_node.SurplusCatch = value
-	}
 	if value, ok := bc.mutation.Author(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -254,13 +256,13 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 		})
 		_node.Author = value
 	}
-	if value, ok := bc.mutation.Describe(); ok {
+	if value, ok := bc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: book.FieldDescribe,
+			Column: book.FieldDescription,
 		})
-		_node.Describe = value
+		_node.Description = value
 	}
 	if value, ok := bc.mutation.Ebook(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -288,8 +290,8 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 	}
 	if nodes := bc.mutation.CategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   book.CategoryTable,
 			Columns: []string{book.CategoryColumn},
 			Bidi:    false,
@@ -297,6 +299,45 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: category.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.category_book = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.OrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.ShoppingCartIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
 				},
 			},
 		}

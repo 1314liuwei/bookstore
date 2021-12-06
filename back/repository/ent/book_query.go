@@ -5,7 +5,9 @@ package ent
 import (
 	"back/repository/ent/book"
 	"back/repository/ent/category"
+	"back/repository/ent/order"
 	"back/repository/ent/predicate"
+	"back/repository/ent/shoppingcart"
 	"context"
 	"database/sql/driver"
 	"errors"
@@ -27,8 +29,10 @@ type BookQuery struct {
 	fields     []string
 	predicates []predicate.Book
 	// eager-loading edges.
-	withCategory *CategoryQuery
-	withFKs      bool
+	withCategory     *CategoryQuery
+	withOrder        *OrderQuery
+	withShoppingCart *ShoppingCartQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,7 +83,51 @@ func (bq *BookQuery) QueryCategory() *CategoryQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(book.Table, book.FieldID, selector),
 			sqlgraph.To(category.Table, category.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, book.CategoryTable, book.CategoryColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, book.CategoryTable, book.CategoryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrder chains the current query on the "order" edge.
+func (bq *BookQuery) QueryOrder() *OrderQuery {
+	query := &OrderQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(book.Table, book.FieldID, selector),
+			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, book.OrderTable, book.OrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryShoppingCart chains the current query on the "shopping_cart" edge.
+func (bq *BookQuery) QueryShoppingCart() *ShoppingCartQuery {
+	query := &ShoppingCartQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(book.Table, book.FieldID, selector),
+			sqlgraph.To(shoppingcart.Table, shoppingcart.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, book.ShoppingCartTable, book.ShoppingCartColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -263,12 +311,14 @@ func (bq *BookQuery) Clone() *BookQuery {
 		return nil
 	}
 	return &BookQuery{
-		config:       bq.config,
-		limit:        bq.limit,
-		offset:       bq.offset,
-		order:        append([]OrderFunc{}, bq.order...),
-		predicates:   append([]predicate.Book{}, bq.predicates...),
-		withCategory: bq.withCategory.Clone(),
+		config:           bq.config,
+		limit:            bq.limit,
+		offset:           bq.offset,
+		order:            append([]OrderFunc{}, bq.order...),
+		predicates:       append([]predicate.Book{}, bq.predicates...),
+		withCategory:     bq.withCategory.Clone(),
+		withOrder:        bq.withOrder.Clone(),
+		withShoppingCart: bq.withShoppingCart.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,
@@ -283,6 +333,28 @@ func (bq *BookQuery) WithCategory(opts ...func(*CategoryQuery)) *BookQuery {
 		opt(query)
 	}
 	bq.withCategory = query
+	return bq
+}
+
+// WithOrder tells the query-builder to eager-load the nodes that are connected to
+// the "order" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BookQuery) WithOrder(opts ...func(*OrderQuery)) *BookQuery {
+	query := &OrderQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withOrder = query
+	return bq
+}
+
+// WithShoppingCart tells the query-builder to eager-load the nodes that are connected to
+// the "shopping_cart" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BookQuery) WithShoppingCart(opts ...func(*ShoppingCartQuery)) *BookQuery {
+	query := &ShoppingCartQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withShoppingCart = query
 	return bq
 }
 
@@ -352,10 +424,15 @@ func (bq *BookQuery) sqlAll(ctx context.Context) ([]*Book, error) {
 		nodes       = []*Book{}
 		withFKs     = bq.withFKs
 		_spec       = bq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [3]bool{
 			bq.withCategory != nil,
+			bq.withOrder != nil,
+			bq.withShoppingCart != nil,
 		}
 	)
+	if bq.withCategory != nil {
+		withFKs = true
+	}
 	if withFKs {
 		_spec.Node.Columns = append(_spec.Node.Columns, book.ForeignKeys...)
 	}
@@ -380,31 +457,89 @@ func (bq *BookQuery) sqlAll(ctx context.Context) ([]*Book, error) {
 	}
 
 	if query := bq.withCategory; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Book)
+		for i := range nodes {
+			if nodes[i].category_book == nil {
+				continue
+			}
+			fk := *nodes[i].category_book
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
+		}
+		query.Where(category.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "category_book" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Category = n
+			}
+		}
+	}
+
+	if query := bq.withOrder; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*Book)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Category = []*Category{}
+			nodes[i].Edges.Order = []*Order{}
 		}
 		query.withFKs = true
-		query.Where(predicate.Category(func(s *sql.Selector) {
-			s.Where(sql.InValues(book.CategoryColumn, fks...))
+		query.Where(predicate.Order(func(s *sql.Selector) {
+			s.Where(sql.InValues(book.OrderColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.book_category
+			fk := n.book_order
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "book_category" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "book_order" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "book_category" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "book_order" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Category = append(node.Edges.Category, n)
+			node.Edges.Order = append(node.Edges.Order, n)
+		}
+	}
+
+	if query := bq.withShoppingCart; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Book)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ShoppingCart = []*ShoppingCart{}
+		}
+		query.withFKs = true
+		query.Where(predicate.ShoppingCart(func(s *sql.Selector) {
+			s.Where(sql.InValues(book.ShoppingCartColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.book_shopping_cart
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "book_shopping_cart" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "book_shopping_cart" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ShoppingCart = append(node.Edges.ShoppingCart, n)
 		}
 	}
 

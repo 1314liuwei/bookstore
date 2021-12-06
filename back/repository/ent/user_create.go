@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"back/repository/ent/order"
+	"back/repository/ent/shoppingcart"
 	"back/repository/ent/user"
 	"context"
 	"errors"
@@ -50,6 +52,36 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 		uc.SetCreatedAt(*t)
 	}
 	return uc
+}
+
+// AddOrderIDs adds the "order" edge to the Order entity by IDs.
+func (uc *UserCreate) AddOrderIDs(ids ...int) *UserCreate {
+	uc.mutation.AddOrderIDs(ids...)
+	return uc
+}
+
+// AddOrder adds the "order" edges to the Order entity.
+func (uc *UserCreate) AddOrder(o ...*Order) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddOrderIDs(ids...)
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (uc *UserCreate) AddShoppingCartIDs(ids ...int) *UserCreate {
+	uc.mutation.AddShoppingCartIDs(ids...)
+	return uc
+}
+
+// AddShoppingCart adds the "shopping_cart" edges to the ShoppingCart entity.
+func (uc *UserCreate) AddShoppingCart(s ...*ShoppingCart) *UserCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddShoppingCartIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -206,6 +238,44 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
+	}
+	if nodes := uc.mutation.OrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OrderTable,
+			Columns: []string{user.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ShoppingCartIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ShoppingCartTable,
+			Columns: []string{user.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

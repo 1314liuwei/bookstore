@@ -48,34 +48,42 @@ func (scu *ShoppingCartUpdate) SetUpdateAt(t time.Time) *ShoppingCartUpdate {
 	return scu
 }
 
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (scu *ShoppingCartUpdate) AddBookIDs(ids ...int) *ShoppingCartUpdate {
-	scu.mutation.AddBookIDs(ids...)
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (scu *ShoppingCartUpdate) SetBookID(id int) *ShoppingCartUpdate {
+	scu.mutation.SetBookID(id)
 	return scu
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (scu *ShoppingCartUpdate) AddBook(b ...*Book) *ShoppingCartUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (scu *ShoppingCartUpdate) SetNillableBookID(id *int) *ShoppingCartUpdate {
+	if id != nil {
+		scu = scu.SetBookID(*id)
 	}
-	return scu.AddBookIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (scu *ShoppingCartUpdate) AddUserIDs(ids ...int) *ShoppingCartUpdate {
-	scu.mutation.AddUserIDs(ids...)
 	return scu
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (scu *ShoppingCartUpdate) AddUser(u ...*User) *ShoppingCartUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetBook sets the "book" edge to the Book entity.
+func (scu *ShoppingCartUpdate) SetBook(b *Book) *ShoppingCartUpdate {
+	return scu.SetBookID(b.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (scu *ShoppingCartUpdate) SetUserID(id int) *ShoppingCartUpdate {
+	scu.mutation.SetUserID(id)
+	return scu
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (scu *ShoppingCartUpdate) SetNillableUserID(id *int) *ShoppingCartUpdate {
+	if id != nil {
+		scu = scu.SetUserID(*id)
 	}
-	return scu.AddUserIDs(ids...)
+	return scu
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (scu *ShoppingCartUpdate) SetUser(u *User) *ShoppingCartUpdate {
+	return scu.SetUserID(u.ID)
 }
 
 // Mutation returns the ShoppingCartMutation object of the builder.
@@ -83,46 +91,16 @@ func (scu *ShoppingCartUpdate) Mutation() *ShoppingCartMutation {
 	return scu.mutation
 }
 
-// ClearBook clears all "book" edges to the Book entity.
+// ClearBook clears the "book" edge to the Book entity.
 func (scu *ShoppingCartUpdate) ClearBook() *ShoppingCartUpdate {
 	scu.mutation.ClearBook()
 	return scu
 }
 
-// RemoveBookIDs removes the "book" edge to Book entities by IDs.
-func (scu *ShoppingCartUpdate) RemoveBookIDs(ids ...int) *ShoppingCartUpdate {
-	scu.mutation.RemoveBookIDs(ids...)
-	return scu
-}
-
-// RemoveBook removes "book" edges to Book entities.
-func (scu *ShoppingCartUpdate) RemoveBook(b ...*Book) *ShoppingCartUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return scu.RemoveBookIDs(ids...)
-}
-
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (scu *ShoppingCartUpdate) ClearUser() *ShoppingCartUpdate {
 	scu.mutation.ClearUser()
 	return scu
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (scu *ShoppingCartUpdate) RemoveUserIDs(ids ...int) *ShoppingCartUpdate {
-	scu.mutation.RemoveUserIDs(ids...)
-	return scu
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (scu *ShoppingCartUpdate) RemoveUser(u ...*User) *ShoppingCartUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return scu.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -229,8 +207,8 @@ func (scu *ShoppingCartUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if scu.mutation.BookCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.BookTable,
 			Columns: []string{shoppingcart.BookColumn},
 			Bidi:    false,
@@ -240,32 +218,13 @@ func (scu *ShoppingCartUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: book.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := scu.mutation.RemovedBookIDs(); len(nodes) > 0 && !scu.mutation.BookCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   shoppingcart.BookTable,
-			Columns: []string{shoppingcart.BookColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: book.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := scu.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.BookTable,
 			Columns: []string{shoppingcart.BookColumn},
 			Bidi:    false,
@@ -283,8 +242,8 @@ func (scu *ShoppingCartUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if scu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.UserTable,
 			Columns: []string{shoppingcart.UserColumn},
 			Bidi:    false,
@@ -294,32 +253,13 @@ func (scu *ShoppingCartUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := scu.mutation.RemovedUserIDs(); len(nodes) > 0 && !scu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   shoppingcart.UserTable,
-			Columns: []string{shoppingcart.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := scu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.UserTable,
 			Columns: []string{shoppingcart.UserColumn},
 			Bidi:    false,
@@ -373,34 +313,42 @@ func (scuo *ShoppingCartUpdateOne) SetUpdateAt(t time.Time) *ShoppingCartUpdateO
 	return scuo
 }
 
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (scuo *ShoppingCartUpdateOne) AddBookIDs(ids ...int) *ShoppingCartUpdateOne {
-	scuo.mutation.AddBookIDs(ids...)
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (scuo *ShoppingCartUpdateOne) SetBookID(id int) *ShoppingCartUpdateOne {
+	scuo.mutation.SetBookID(id)
 	return scuo
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (scuo *ShoppingCartUpdateOne) AddBook(b ...*Book) *ShoppingCartUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (scuo *ShoppingCartUpdateOne) SetNillableBookID(id *int) *ShoppingCartUpdateOne {
+	if id != nil {
+		scuo = scuo.SetBookID(*id)
 	}
-	return scuo.AddBookIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (scuo *ShoppingCartUpdateOne) AddUserIDs(ids ...int) *ShoppingCartUpdateOne {
-	scuo.mutation.AddUserIDs(ids...)
 	return scuo
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (scuo *ShoppingCartUpdateOne) AddUser(u ...*User) *ShoppingCartUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetBook sets the "book" edge to the Book entity.
+func (scuo *ShoppingCartUpdateOne) SetBook(b *Book) *ShoppingCartUpdateOne {
+	return scuo.SetBookID(b.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (scuo *ShoppingCartUpdateOne) SetUserID(id int) *ShoppingCartUpdateOne {
+	scuo.mutation.SetUserID(id)
+	return scuo
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (scuo *ShoppingCartUpdateOne) SetNillableUserID(id *int) *ShoppingCartUpdateOne {
+	if id != nil {
+		scuo = scuo.SetUserID(*id)
 	}
-	return scuo.AddUserIDs(ids...)
+	return scuo
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (scuo *ShoppingCartUpdateOne) SetUser(u *User) *ShoppingCartUpdateOne {
+	return scuo.SetUserID(u.ID)
 }
 
 // Mutation returns the ShoppingCartMutation object of the builder.
@@ -408,46 +356,16 @@ func (scuo *ShoppingCartUpdateOne) Mutation() *ShoppingCartMutation {
 	return scuo.mutation
 }
 
-// ClearBook clears all "book" edges to the Book entity.
+// ClearBook clears the "book" edge to the Book entity.
 func (scuo *ShoppingCartUpdateOne) ClearBook() *ShoppingCartUpdateOne {
 	scuo.mutation.ClearBook()
 	return scuo
 }
 
-// RemoveBookIDs removes the "book" edge to Book entities by IDs.
-func (scuo *ShoppingCartUpdateOne) RemoveBookIDs(ids ...int) *ShoppingCartUpdateOne {
-	scuo.mutation.RemoveBookIDs(ids...)
-	return scuo
-}
-
-// RemoveBook removes "book" edges to Book entities.
-func (scuo *ShoppingCartUpdateOne) RemoveBook(b ...*Book) *ShoppingCartUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return scuo.RemoveBookIDs(ids...)
-}
-
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (scuo *ShoppingCartUpdateOne) ClearUser() *ShoppingCartUpdateOne {
 	scuo.mutation.ClearUser()
 	return scuo
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (scuo *ShoppingCartUpdateOne) RemoveUserIDs(ids ...int) *ShoppingCartUpdateOne {
-	scuo.mutation.RemoveUserIDs(ids...)
-	return scuo
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (scuo *ShoppingCartUpdateOne) RemoveUser(u ...*User) *ShoppingCartUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return scuo.RemoveUserIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -578,8 +496,8 @@ func (scuo *ShoppingCartUpdateOne) sqlSave(ctx context.Context) (_node *Shopping
 	}
 	if scuo.mutation.BookCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.BookTable,
 			Columns: []string{shoppingcart.BookColumn},
 			Bidi:    false,
@@ -589,32 +507,13 @@ func (scuo *ShoppingCartUpdateOne) sqlSave(ctx context.Context) (_node *Shopping
 					Column: book.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := scuo.mutation.RemovedBookIDs(); len(nodes) > 0 && !scuo.mutation.BookCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   shoppingcart.BookTable,
-			Columns: []string{shoppingcart.BookColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: book.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := scuo.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.BookTable,
 			Columns: []string{shoppingcart.BookColumn},
 			Bidi:    false,
@@ -632,8 +531,8 @@ func (scuo *ShoppingCartUpdateOne) sqlSave(ctx context.Context) (_node *Shopping
 	}
 	if scuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.UserTable,
 			Columns: []string{shoppingcart.UserColumn},
 			Bidi:    false,
@@ -643,32 +542,13 @@ func (scuo *ShoppingCartUpdateOne) sqlSave(ctx context.Context) (_node *Shopping
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := scuo.mutation.RemovedUserIDs(); len(nodes) > 0 && !scuo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   shoppingcart.UserTable,
-			Columns: []string{shoppingcart.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := scuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.UserTable,
 			Columns: []string{shoppingcart.UserColumn},
 			Bidi:    false,

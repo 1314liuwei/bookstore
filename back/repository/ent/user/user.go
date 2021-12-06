@@ -20,8 +20,26 @@ const (
 	FieldType = "type"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// EdgeOrder holds the string denoting the order edge name in mutations.
+	EdgeOrder = "order"
+	// EdgeShoppingCart holds the string denoting the shopping_cart edge name in mutations.
+	EdgeShoppingCart = "shopping_cart"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// OrderTable is the table that holds the order relation/edge.
+	OrderTable = "orders"
+	// OrderInverseTable is the table name for the Order entity.
+	// It exists in this package in order to avoid circular dependency with the "order" package.
+	OrderInverseTable = "orders"
+	// OrderColumn is the table column denoting the order relation/edge.
+	OrderColumn = "user_order"
+	// ShoppingCartTable is the table that holds the shopping_cart relation/edge.
+	ShoppingCartTable = "shopping_carts"
+	// ShoppingCartInverseTable is the table name for the ShoppingCart entity.
+	// It exists in this package in order to avoid circular dependency with the "shoppingcart" package.
+	ShoppingCartInverseTable = "shopping_carts"
+	// ShoppingCartColumn is the table column denoting the shopping_cart relation/edge.
+	ShoppingCartColumn = "user_shopping_cart"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -33,22 +51,10 @@ var Columns = []string{
 	FieldCreatedAt,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"order_user",
-	"shopping_cart_user",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

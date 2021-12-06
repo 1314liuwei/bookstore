@@ -243,7 +243,39 @@ func (c *BookClient) QueryCategory(b *Book) *CategoryQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(book.Table, book.FieldID, id),
 			sqlgraph.To(category.Table, category.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, book.CategoryTable, book.CategoryColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, book.CategoryTable, book.CategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrder queries the order edge of a Book.
+func (c *BookClient) QueryOrder(b *Book) *OrderQuery {
+	query := &OrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(book.Table, book.FieldID, id),
+			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, book.OrderTable, book.OrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryShoppingCart queries the shopping_cart edge of a Book.
+func (c *BookClient) QueryShoppingCart(b *Book) *ShoppingCartQuery {
+	query := &ShoppingCartQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(book.Table, book.FieldID, id),
+			sqlgraph.To(shoppingcart.Table, shoppingcart.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, book.ShoppingCartTable, book.ShoppingCartColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -339,6 +371,22 @@ func (c *CategoryClient) GetX(ctx context.Context, id int) *Category {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryBook queries the book edge of a Category.
+func (c *CategoryClient) QueryBook(ca *Category) *BookQuery {
+	query := &BookQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, id),
+			sqlgraph.To(book.Table, book.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, category.BookTable, category.BookColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -439,7 +487,7 @@ func (c *OrderClient) QueryUser(o *Order) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(order.Table, order.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.UserTable, order.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, order.UserTable, order.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -455,7 +503,7 @@ func (c *OrderClient) QueryBook(o *Order) *BookQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(order.Table, order.FieldID, id),
 			sqlgraph.To(book.Table, book.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.BookTable, order.BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, order.BookTable, order.BookColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -561,7 +609,7 @@ func (c *ShoppingCartClient) QueryBook(sc *ShoppingCart) *BookQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(shoppingcart.Table, shoppingcart.FieldID, id),
 			sqlgraph.To(book.Table, book.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, shoppingcart.BookTable, shoppingcart.BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, shoppingcart.BookTable, shoppingcart.BookColumn),
 		)
 		fromV = sqlgraph.Neighbors(sc.driver.Dialect(), step)
 		return fromV, nil
@@ -577,7 +625,7 @@ func (c *ShoppingCartClient) QueryUser(sc *ShoppingCart) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(shoppingcart.Table, shoppingcart.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, shoppingcart.UserTable, shoppingcart.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, shoppingcart.UserTable, shoppingcart.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(sc.driver.Dialect(), step)
 		return fromV, nil
@@ -673,6 +721,38 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryOrder queries the order edge of a User.
+func (c *UserClient) QueryOrder(u *User) *OrderQuery {
+	query := &OrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OrderTable, user.OrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryShoppingCart queries the shopping_cart edge of a User.
+func (c *UserClient) QueryShoppingCart(u *User) *ShoppingCartQuery {
+	query := &ShoppingCartQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(shoppingcart.Table, shoppingcart.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ShoppingCartTable, user.ShoppingCartColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

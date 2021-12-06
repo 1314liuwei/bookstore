@@ -24,19 +24,19 @@ const (
 	// Table holds the table name of the shoppingcart in the database.
 	Table = "shopping_carts"
 	// BookTable is the table that holds the book relation/edge.
-	BookTable = "books"
+	BookTable = "shopping_carts"
 	// BookInverseTable is the table name for the Book entity.
 	// It exists in this package in order to avoid circular dependency with the "book" package.
 	BookInverseTable = "books"
 	// BookColumn is the table column denoting the book relation/edge.
-	BookColumn = "shopping_cart_book"
+	BookColumn = "book_shopping_cart"
 	// UserTable is the table that holds the user relation/edge.
-	UserTable = "users"
+	UserTable = "shopping_carts"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "shopping_cart_user"
+	UserColumn = "user_shopping_cart"
 )
 
 // Columns holds all SQL columns for shoppingcart fields.
@@ -47,10 +47,22 @@ var Columns = []string{
 	FieldUpdateAt,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "shopping_carts"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"book_shopping_cart",
+	"user_shopping_cart",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

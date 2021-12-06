@@ -24,7 +24,7 @@ func (ShoppingCart) Fields() []ent.Field {
 // Edges of the ShoppingCart.
 func (ShoppingCart) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("book", Book.Type),
-		edge.To("user", User.Type),
+		edge.From("book", Book.Type).Ref("shopping_cart").Unique(),
+		edge.From("user", User.Type).Ref("shopping_cart").Unique(),
 	}
 }

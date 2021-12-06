@@ -36,26 +36,27 @@ const (
 // BookMutation represents an operation that mutates the Book nodes in the graph.
 type BookMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	name             *string
-	price            *int
-	addprice         *int
-	surplus_catch    *int
-	addsurplus_catch *int
-	author           *string
-	describe         *string
-	ebook            *string
-	cover            *string
-	created_at       *time.Time
-	clearedFields    map[string]struct{}
-	category         map[int]struct{}
-	removedcategory  map[int]struct{}
-	clearedcategory  bool
-	done             bool
-	oldValue         func(context.Context) (*Book, error)
-	predicates       []predicate.Book
+	op                   Op
+	typ                  string
+	id                   *int
+	name                 *string
+	author               *string
+	description          *string
+	ebook                *string
+	cover                *string
+	created_at           *time.Time
+	clearedFields        map[string]struct{}
+	category             *int
+	clearedcategory      bool
+	_order               map[int]struct{}
+	removed_order        map[int]struct{}
+	cleared_order        bool
+	shopping_cart        map[int]struct{}
+	removedshopping_cart map[int]struct{}
+	clearedshopping_cart bool
+	done                 bool
+	oldValue             func(context.Context) (*Book, error)
+	predicates           []predicate.Book
 }
 
 var _ ent.Mutation = (*BookMutation)(nil)
@@ -173,118 +174,6 @@ func (m *BookMutation) ResetName() {
 	m.name = nil
 }
 
-// SetPrice sets the "price" field.
-func (m *BookMutation) SetPrice(i int) {
-	m.price = &i
-	m.addprice = nil
-}
-
-// Price returns the value of the "price" field in the mutation.
-func (m *BookMutation) Price() (r int, exists bool) {
-	v := m.price
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPrice returns the old "price" field's value of the Book entity.
-// If the Book object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BookMutation) OldPrice(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPrice is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPrice requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
-	}
-	return oldValue.Price, nil
-}
-
-// AddPrice adds i to the "price" field.
-func (m *BookMutation) AddPrice(i int) {
-	if m.addprice != nil {
-		*m.addprice += i
-	} else {
-		m.addprice = &i
-	}
-}
-
-// AddedPrice returns the value that was added to the "price" field in this mutation.
-func (m *BookMutation) AddedPrice() (r int, exists bool) {
-	v := m.addprice
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetPrice resets all changes to the "price" field.
-func (m *BookMutation) ResetPrice() {
-	m.price = nil
-	m.addprice = nil
-}
-
-// SetSurplusCatch sets the "surplus_catch" field.
-func (m *BookMutation) SetSurplusCatch(i int) {
-	m.surplus_catch = &i
-	m.addsurplus_catch = nil
-}
-
-// SurplusCatch returns the value of the "surplus_catch" field in the mutation.
-func (m *BookMutation) SurplusCatch() (r int, exists bool) {
-	v := m.surplus_catch
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSurplusCatch returns the old "surplus_catch" field's value of the Book entity.
-// If the Book object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BookMutation) OldSurplusCatch(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldSurplusCatch is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldSurplusCatch requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSurplusCatch: %w", err)
-	}
-	return oldValue.SurplusCatch, nil
-}
-
-// AddSurplusCatch adds i to the "surplus_catch" field.
-func (m *BookMutation) AddSurplusCatch(i int) {
-	if m.addsurplus_catch != nil {
-		*m.addsurplus_catch += i
-	} else {
-		m.addsurplus_catch = &i
-	}
-}
-
-// AddedSurplusCatch returns the value that was added to the "surplus_catch" field in this mutation.
-func (m *BookMutation) AddedSurplusCatch() (r int, exists bool) {
-	v := m.addsurplus_catch
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetSurplusCatch resets all changes to the "surplus_catch" field.
-func (m *BookMutation) ResetSurplusCatch() {
-	m.surplus_catch = nil
-	m.addsurplus_catch = nil
-}
-
 // SetAuthor sets the "author" field.
 func (m *BookMutation) SetAuthor(s string) {
 	m.author = &s
@@ -321,40 +210,40 @@ func (m *BookMutation) ResetAuthor() {
 	m.author = nil
 }
 
-// SetDescribe sets the "describe" field.
-func (m *BookMutation) SetDescribe(s string) {
-	m.describe = &s
+// SetDescription sets the "description" field.
+func (m *BookMutation) SetDescription(s string) {
+	m.description = &s
 }
 
-// Describe returns the value of the "describe" field in the mutation.
-func (m *BookMutation) Describe() (r string, exists bool) {
-	v := m.describe
+// Description returns the value of the "description" field in the mutation.
+func (m *BookMutation) Description() (r string, exists bool) {
+	v := m.description
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDescribe returns the old "describe" field's value of the Book entity.
+// OldDescription returns the old "description" field's value of the Book entity.
 // If the Book object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BookMutation) OldDescribe(ctx context.Context) (v string, err error) {
+func (m *BookMutation) OldDescription(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDescribe is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldDescription is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDescribe requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDescribe: %w", err)
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
 	}
-	return oldValue.Describe, nil
+	return oldValue.Description, nil
 }
 
-// ResetDescribe resets all changes to the "describe" field.
-func (m *BookMutation) ResetDescribe() {
-	m.describe = nil
+// ResetDescription resets all changes to the "description" field.
+func (m *BookMutation) ResetDescription() {
+	m.description = nil
 }
 
 // SetEbook sets the "ebook" field.
@@ -465,14 +354,9 @@ func (m *BookMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// AddCategoryIDs adds the "category" edge to the Category entity by ids.
-func (m *BookMutation) AddCategoryIDs(ids ...int) {
-	if m.category == nil {
-		m.category = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.category[ids[i]] = struct{}{}
-	}
+// SetCategoryID sets the "category" edge to the Category entity by id.
+func (m *BookMutation) SetCategoryID(id int) {
+	m.category = &id
 }
 
 // ClearCategory clears the "category" edge to the Category entity.
@@ -485,29 +369,20 @@ func (m *BookMutation) CategoryCleared() bool {
 	return m.clearedcategory
 }
 
-// RemoveCategoryIDs removes the "category" edge to the Category entity by IDs.
-func (m *BookMutation) RemoveCategoryIDs(ids ...int) {
-	if m.removedcategory == nil {
-		m.removedcategory = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.category, ids[i])
-		m.removedcategory[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedCategory returns the removed IDs of the "category" edge to the Category entity.
-func (m *BookMutation) RemovedCategoryIDs() (ids []int) {
-	for id := range m.removedcategory {
-		ids = append(ids, id)
+// CategoryID returns the "category" edge ID in the mutation.
+func (m *BookMutation) CategoryID() (id int, exists bool) {
+	if m.category != nil {
+		return *m.category, true
 	}
 	return
 }
 
 // CategoryIDs returns the "category" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CategoryID instead. It exists only for internal usage by the builders.
 func (m *BookMutation) CategoryIDs() (ids []int) {
-	for id := range m.category {
-		ids = append(ids, id)
+	if id := m.category; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -516,7 +391,114 @@ func (m *BookMutation) CategoryIDs() (ids []int) {
 func (m *BookMutation) ResetCategory() {
 	m.category = nil
 	m.clearedcategory = false
-	m.removedcategory = nil
+}
+
+// AddOrderIDs adds the "order" edge to the Order entity by ids.
+func (m *BookMutation) AddOrderIDs(ids ...int) {
+	if m._order == nil {
+		m._order = make(map[int]struct{})
+	}
+	for i := range ids {
+		m._order[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrder clears the "order" edge to the Order entity.
+func (m *BookMutation) ClearOrder() {
+	m.cleared_order = true
+}
+
+// OrderCleared reports if the "order" edge to the Order entity was cleared.
+func (m *BookMutation) OrderCleared() bool {
+	return m.cleared_order
+}
+
+// RemoveOrderIDs removes the "order" edge to the Order entity by IDs.
+func (m *BookMutation) RemoveOrderIDs(ids ...int) {
+	if m.removed_order == nil {
+		m.removed_order = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m._order, ids[i])
+		m.removed_order[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrder returns the removed IDs of the "order" edge to the Order entity.
+func (m *BookMutation) RemovedOrderIDs() (ids []int) {
+	for id := range m.removed_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrderIDs returns the "order" edge IDs in the mutation.
+func (m *BookMutation) OrderIDs() (ids []int) {
+	for id := range m._order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrder resets all changes to the "order" edge.
+func (m *BookMutation) ResetOrder() {
+	m._order = nil
+	m.cleared_order = false
+	m.removed_order = nil
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by ids.
+func (m *BookMutation) AddShoppingCartIDs(ids ...int) {
+	if m.shopping_cart == nil {
+		m.shopping_cart = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.shopping_cart[ids[i]] = struct{}{}
+	}
+}
+
+// ClearShoppingCart clears the "shopping_cart" edge to the ShoppingCart entity.
+func (m *BookMutation) ClearShoppingCart() {
+	m.clearedshopping_cart = true
+}
+
+// ShoppingCartCleared reports if the "shopping_cart" edge to the ShoppingCart entity was cleared.
+func (m *BookMutation) ShoppingCartCleared() bool {
+	return m.clearedshopping_cart
+}
+
+// RemoveShoppingCartIDs removes the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (m *BookMutation) RemoveShoppingCartIDs(ids ...int) {
+	if m.removedshopping_cart == nil {
+		m.removedshopping_cart = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.shopping_cart, ids[i])
+		m.removedshopping_cart[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedShoppingCart returns the removed IDs of the "shopping_cart" edge to the ShoppingCart entity.
+func (m *BookMutation) RemovedShoppingCartIDs() (ids []int) {
+	for id := range m.removedshopping_cart {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ShoppingCartIDs returns the "shopping_cart" edge IDs in the mutation.
+func (m *BookMutation) ShoppingCartIDs() (ids []int) {
+	for id := range m.shopping_cart {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetShoppingCart resets all changes to the "shopping_cart" edge.
+func (m *BookMutation) ResetShoppingCart() {
+	m.shopping_cart = nil
+	m.clearedshopping_cart = false
+	m.removedshopping_cart = nil
 }
 
 // Where appends a list predicates to the BookMutation builder.
@@ -538,21 +520,15 @@ func (m *BookMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BookMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 6)
 	if m.name != nil {
 		fields = append(fields, book.FieldName)
-	}
-	if m.price != nil {
-		fields = append(fields, book.FieldPrice)
-	}
-	if m.surplus_catch != nil {
-		fields = append(fields, book.FieldSurplusCatch)
 	}
 	if m.author != nil {
 		fields = append(fields, book.FieldAuthor)
 	}
-	if m.describe != nil {
-		fields = append(fields, book.FieldDescribe)
+	if m.description != nil {
+		fields = append(fields, book.FieldDescription)
 	}
 	if m.ebook != nil {
 		fields = append(fields, book.FieldEbook)
@@ -573,14 +549,10 @@ func (m *BookMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case book.FieldName:
 		return m.Name()
-	case book.FieldPrice:
-		return m.Price()
-	case book.FieldSurplusCatch:
-		return m.SurplusCatch()
 	case book.FieldAuthor:
 		return m.Author()
-	case book.FieldDescribe:
-		return m.Describe()
+	case book.FieldDescription:
+		return m.Description()
 	case book.FieldEbook:
 		return m.Ebook()
 	case book.FieldCover:
@@ -598,14 +570,10 @@ func (m *BookMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case book.FieldName:
 		return m.OldName(ctx)
-	case book.FieldPrice:
-		return m.OldPrice(ctx)
-	case book.FieldSurplusCatch:
-		return m.OldSurplusCatch(ctx)
 	case book.FieldAuthor:
 		return m.OldAuthor(ctx)
-	case book.FieldDescribe:
-		return m.OldDescribe(ctx)
+	case book.FieldDescription:
+		return m.OldDescription(ctx)
 	case book.FieldEbook:
 		return m.OldEbook(ctx)
 	case book.FieldCover:
@@ -628,20 +596,6 @@ func (m *BookMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case book.FieldPrice:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPrice(v)
-		return nil
-	case book.FieldSurplusCatch:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSurplusCatch(v)
-		return nil
 	case book.FieldAuthor:
 		v, ok := value.(string)
 		if !ok {
@@ -649,12 +603,12 @@ func (m *BookMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAuthor(v)
 		return nil
-	case book.FieldDescribe:
+	case book.FieldDescription:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDescribe(v)
+		m.SetDescription(v)
 		return nil
 	case book.FieldEbook:
 		v, ok := value.(string)
@@ -684,26 +638,13 @@ func (m *BookMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *BookMutation) AddedFields() []string {
-	var fields []string
-	if m.addprice != nil {
-		fields = append(fields, book.FieldPrice)
-	}
-	if m.addsurplus_catch != nil {
-		fields = append(fields, book.FieldSurplusCatch)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *BookMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case book.FieldPrice:
-		return m.AddedPrice()
-	case book.FieldSurplusCatch:
-		return m.AddedSurplusCatch()
-	}
 	return nil, false
 }
 
@@ -712,20 +653,6 @@ func (m *BookMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BookMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case book.FieldPrice:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddPrice(v)
-		return nil
-	case book.FieldSurplusCatch:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSurplusCatch(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Book numeric field %s", name)
 }
@@ -756,17 +683,11 @@ func (m *BookMutation) ResetField(name string) error {
 	case book.FieldName:
 		m.ResetName()
 		return nil
-	case book.FieldPrice:
-		m.ResetPrice()
-		return nil
-	case book.FieldSurplusCatch:
-		m.ResetSurplusCatch()
-		return nil
 	case book.FieldAuthor:
 		m.ResetAuthor()
 		return nil
-	case book.FieldDescribe:
-		m.ResetDescribe()
+	case book.FieldDescription:
+		m.ResetDescription()
 		return nil
 	case book.FieldEbook:
 		m.ResetEbook()
@@ -783,9 +704,15 @@ func (m *BookMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BookMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.category != nil {
 		edges = append(edges, book.EdgeCategory)
+	}
+	if m._order != nil {
+		edges = append(edges, book.EdgeOrder)
+	}
+	if m.shopping_cart != nil {
+		edges = append(edges, book.EdgeShoppingCart)
 	}
 	return edges
 }
@@ -795,8 +722,18 @@ func (m *BookMutation) AddedEdges() []string {
 func (m *BookMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case book.EdgeCategory:
-		ids := make([]ent.Value, 0, len(m.category))
-		for id := range m.category {
+		if id := m.category; id != nil {
+			return []ent.Value{*id}
+		}
+	case book.EdgeOrder:
+		ids := make([]ent.Value, 0, len(m._order))
+		for id := range m._order {
+			ids = append(ids, id)
+		}
+		return ids
+	case book.EdgeShoppingCart:
+		ids := make([]ent.Value, 0, len(m.shopping_cart))
+		for id := range m.shopping_cart {
 			ids = append(ids, id)
 		}
 		return ids
@@ -806,9 +743,12 @@ func (m *BookMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BookMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.removedcategory != nil {
-		edges = append(edges, book.EdgeCategory)
+	edges := make([]string, 0, 3)
+	if m.removed_order != nil {
+		edges = append(edges, book.EdgeOrder)
+	}
+	if m.removedshopping_cart != nil {
+		edges = append(edges, book.EdgeShoppingCart)
 	}
 	return edges
 }
@@ -817,9 +757,15 @@ func (m *BookMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *BookMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case book.EdgeCategory:
-		ids := make([]ent.Value, 0, len(m.removedcategory))
-		for id := range m.removedcategory {
+	case book.EdgeOrder:
+		ids := make([]ent.Value, 0, len(m.removed_order))
+		for id := range m.removed_order {
+			ids = append(ids, id)
+		}
+		return ids
+	case book.EdgeShoppingCart:
+		ids := make([]ent.Value, 0, len(m.removedshopping_cart))
+		for id := range m.removedshopping_cart {
 			ids = append(ids, id)
 		}
 		return ids
@@ -829,9 +775,15 @@ func (m *BookMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BookMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.clearedcategory {
 		edges = append(edges, book.EdgeCategory)
+	}
+	if m.cleared_order {
+		edges = append(edges, book.EdgeOrder)
+	}
+	if m.clearedshopping_cart {
+		edges = append(edges, book.EdgeShoppingCart)
 	}
 	return edges
 }
@@ -842,6 +794,10 @@ func (m *BookMutation) EdgeCleared(name string) bool {
 	switch name {
 	case book.EdgeCategory:
 		return m.clearedcategory
+	case book.EdgeOrder:
+		return m.cleared_order
+	case book.EdgeShoppingCart:
+		return m.clearedshopping_cart
 	}
 	return false
 }
@@ -850,6 +806,9 @@ func (m *BookMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *BookMutation) ClearEdge(name string) error {
 	switch name {
+	case book.EdgeCategory:
+		m.ClearCategory()
+		return nil
 	}
 	return fmt.Errorf("unknown Book unique edge %s", name)
 }
@@ -860,6 +819,12 @@ func (m *BookMutation) ResetEdge(name string) error {
 	switch name {
 	case book.EdgeCategory:
 		m.ResetCategory()
+		return nil
+	case book.EdgeOrder:
+		m.ResetOrder()
+		return nil
+	case book.EdgeShoppingCart:
+		m.ResetShoppingCart()
 		return nil
 	}
 	return fmt.Errorf("unknown Book edge %s", name)
@@ -873,6 +838,9 @@ type CategoryMutation struct {
 	id            *int
 	name          *string
 	clearedFields map[string]struct{}
+	book          map[int]struct{}
+	removedbook   map[int]struct{}
+	clearedbook   bool
 	done          bool
 	oldValue      func(context.Context) (*Category, error)
 	predicates    []predicate.Category
@@ -993,6 +961,60 @@ func (m *CategoryMutation) ResetName() {
 	m.name = nil
 }
 
+// AddBookIDs adds the "book" edge to the Book entity by ids.
+func (m *CategoryMutation) AddBookIDs(ids ...int) {
+	if m.book == nil {
+		m.book = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.book[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBook clears the "book" edge to the Book entity.
+func (m *CategoryMutation) ClearBook() {
+	m.clearedbook = true
+}
+
+// BookCleared reports if the "book" edge to the Book entity was cleared.
+func (m *CategoryMutation) BookCleared() bool {
+	return m.clearedbook
+}
+
+// RemoveBookIDs removes the "book" edge to the Book entity by IDs.
+func (m *CategoryMutation) RemoveBookIDs(ids ...int) {
+	if m.removedbook == nil {
+		m.removedbook = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.book, ids[i])
+		m.removedbook[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBook returns the removed IDs of the "book" edge to the Book entity.
+func (m *CategoryMutation) RemovedBookIDs() (ids []int) {
+	for id := range m.removedbook {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BookIDs returns the "book" edge IDs in the mutation.
+func (m *CategoryMutation) BookIDs() (ids []int) {
+	for id := range m.book {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBook resets all changes to the "book" edge.
+func (m *CategoryMutation) ResetBook() {
+	m.book = nil
+	m.clearedbook = false
+	m.removedbook = nil
+}
+
 // Where appends a list predicates to the CategoryMutation builder.
 func (m *CategoryMutation) Where(ps ...predicate.Category) {
 	m.predicates = append(m.predicates, ps...)
@@ -1111,49 +1133,85 @@ func (m *CategoryMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CategoryMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.book != nil {
+		edges = append(edges, category.EdgeBook)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *CategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case category.EdgeBook:
+		ids := make([]ent.Value, 0, len(m.book))
+		for id := range m.book {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CategoryMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedbook != nil {
+		edges = append(edges, category.EdgeBook)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *CategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case category.EdgeBook:
+		ids := make([]ent.Value, 0, len(m.removedbook))
+		for id := range m.removedbook {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CategoryMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedbook {
+		edges = append(edges, category.EdgeBook)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *CategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case category.EdgeBook:
+		return m.clearedbook
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *CategoryMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Category unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *CategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case category.EdgeBook:
+		m.ResetBook()
+		return nil
+	}
 	return fmt.Errorf("unknown Category edge %s", name)
 }
 
@@ -1169,11 +1227,9 @@ type OrderMutation struct {
 	created_at    *time.Time
 	update_at     *time.Time
 	clearedFields map[string]struct{}
-	user          map[int]struct{}
-	removeduser   map[int]struct{}
+	user          *int
 	cleareduser   bool
-	book          map[int]struct{}
-	removedbook   map[int]struct{}
+	book          *int
 	clearedbook   bool
 	done          bool
 	oldValue      func(context.Context) (*Order, error)
@@ -1423,14 +1479,9 @@ func (m *OrderMutation) ResetUpdateAt() {
 	m.update_at = nil
 }
 
-// AddUserIDs adds the "user" edge to the User entity by ids.
-func (m *OrderMutation) AddUserIDs(ids ...int) {
-	if m.user == nil {
-		m.user = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *OrderMutation) SetUserID(id int) {
+	m.user = &id
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -1443,29 +1494,20 @@ func (m *OrderMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
-// RemoveUserIDs removes the "user" edge to the User entity by IDs.
-func (m *OrderMutation) RemoveUserIDs(ids ...int) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the User entity.
-func (m *OrderMutation) RemovedUserIDs() (ids []int) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
+// UserID returns the "user" edge ID in the mutation.
+func (m *OrderMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
 	}
 	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
 func (m *OrderMutation) UserIDs() (ids []int) {
-	for id := range m.user {
-		ids = append(ids, id)
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -1474,17 +1516,11 @@ func (m *OrderMutation) UserIDs() (ids []int) {
 func (m *OrderMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
-	m.removeduser = nil
 }
 
-// AddBookIDs adds the "book" edge to the Book entity by ids.
-func (m *OrderMutation) AddBookIDs(ids ...int) {
-	if m.book == nil {
-		m.book = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.book[ids[i]] = struct{}{}
-	}
+// SetBookID sets the "book" edge to the Book entity by id.
+func (m *OrderMutation) SetBookID(id int) {
+	m.book = &id
 }
 
 // ClearBook clears the "book" edge to the Book entity.
@@ -1497,29 +1533,20 @@ func (m *OrderMutation) BookCleared() bool {
 	return m.clearedbook
 }
 
-// RemoveBookIDs removes the "book" edge to the Book entity by IDs.
-func (m *OrderMutation) RemoveBookIDs(ids ...int) {
-	if m.removedbook == nil {
-		m.removedbook = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.book, ids[i])
-		m.removedbook[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBook returns the removed IDs of the "book" edge to the Book entity.
-func (m *OrderMutation) RemovedBookIDs() (ids []int) {
-	for id := range m.removedbook {
-		ids = append(ids, id)
+// BookID returns the "book" edge ID in the mutation.
+func (m *OrderMutation) BookID() (id int, exists bool) {
+	if m.book != nil {
+		return *m.book, true
 	}
 	return
 }
 
 // BookIDs returns the "book" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// BookID instead. It exists only for internal usage by the builders.
 func (m *OrderMutation) BookIDs() (ids []int) {
-	for id := range m.book {
-		ids = append(ids, id)
+	if id := m.book; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -1528,7 +1555,6 @@ func (m *OrderMutation) BookIDs() (ids []int) {
 func (m *OrderMutation) ResetBook() {
 	m.book = nil
 	m.clearedbook = false
-	m.removedbook = nil
 }
 
 // Where appends a list predicates to the OrderMutation builder.
@@ -1730,17 +1756,13 @@ func (m *OrderMutation) AddedEdges() []string {
 func (m *OrderMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case order.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
-			ids = append(ids, id)
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case order.EdgeBook:
-		ids := make([]ent.Value, 0, len(m.book))
-		for id := range m.book {
-			ids = append(ids, id)
+		if id := m.book; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -1748,12 +1770,6 @@ func (m *OrderMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrderMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removeduser != nil {
-		edges = append(edges, order.EdgeUser)
-	}
-	if m.removedbook != nil {
-		edges = append(edges, order.EdgeBook)
-	}
 	return edges
 }
 
@@ -1761,18 +1777,6 @@ func (m *OrderMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *OrderMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case order.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
-			ids = append(ids, id)
-		}
-		return ids
-	case order.EdgeBook:
-		ids := make([]ent.Value, 0, len(m.removedbook))
-		for id := range m.removedbook {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -1805,6 +1809,12 @@ func (m *OrderMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OrderMutation) ClearEdge(name string) error {
 	switch name {
+	case order.EdgeUser:
+		m.ClearUser()
+		return nil
+	case order.EdgeBook:
+		m.ClearBook()
+		return nil
 	}
 	return fmt.Errorf("unknown Order unique edge %s", name)
 }
@@ -1834,11 +1844,9 @@ type ShoppingCartMutation struct {
 	created_at    *time.Time
 	update_at     *time.Time
 	clearedFields map[string]struct{}
-	book          map[int]struct{}
-	removedbook   map[int]struct{}
+	book          *int
 	clearedbook   bool
-	user          map[int]struct{}
-	removeduser   map[int]struct{}
+	user          *int
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*ShoppingCart, error)
@@ -2052,14 +2060,9 @@ func (m *ShoppingCartMutation) ResetUpdateAt() {
 	m.update_at = nil
 }
 
-// AddBookIDs adds the "book" edge to the Book entity by ids.
-func (m *ShoppingCartMutation) AddBookIDs(ids ...int) {
-	if m.book == nil {
-		m.book = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.book[ids[i]] = struct{}{}
-	}
+// SetBookID sets the "book" edge to the Book entity by id.
+func (m *ShoppingCartMutation) SetBookID(id int) {
+	m.book = &id
 }
 
 // ClearBook clears the "book" edge to the Book entity.
@@ -2072,29 +2075,20 @@ func (m *ShoppingCartMutation) BookCleared() bool {
 	return m.clearedbook
 }
 
-// RemoveBookIDs removes the "book" edge to the Book entity by IDs.
-func (m *ShoppingCartMutation) RemoveBookIDs(ids ...int) {
-	if m.removedbook == nil {
-		m.removedbook = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.book, ids[i])
-		m.removedbook[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBook returns the removed IDs of the "book" edge to the Book entity.
-func (m *ShoppingCartMutation) RemovedBookIDs() (ids []int) {
-	for id := range m.removedbook {
-		ids = append(ids, id)
+// BookID returns the "book" edge ID in the mutation.
+func (m *ShoppingCartMutation) BookID() (id int, exists bool) {
+	if m.book != nil {
+		return *m.book, true
 	}
 	return
 }
 
 // BookIDs returns the "book" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// BookID instead. It exists only for internal usage by the builders.
 func (m *ShoppingCartMutation) BookIDs() (ids []int) {
-	for id := range m.book {
-		ids = append(ids, id)
+	if id := m.book; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2103,17 +2097,11 @@ func (m *ShoppingCartMutation) BookIDs() (ids []int) {
 func (m *ShoppingCartMutation) ResetBook() {
 	m.book = nil
 	m.clearedbook = false
-	m.removedbook = nil
 }
 
-// AddUserIDs adds the "user" edge to the User entity by ids.
-func (m *ShoppingCartMutation) AddUserIDs(ids ...int) {
-	if m.user == nil {
-		m.user = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *ShoppingCartMutation) SetUserID(id int) {
+	m.user = &id
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -2126,29 +2114,20 @@ func (m *ShoppingCartMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
-// RemoveUserIDs removes the "user" edge to the User entity by IDs.
-func (m *ShoppingCartMutation) RemoveUserIDs(ids ...int) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the User entity.
-func (m *ShoppingCartMutation) RemovedUserIDs() (ids []int) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
+// UserID returns the "user" edge ID in the mutation.
+func (m *ShoppingCartMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
 	}
 	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
 func (m *ShoppingCartMutation) UserIDs() (ids []int) {
-	for id := range m.user {
-		ids = append(ids, id)
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2157,7 +2136,6 @@ func (m *ShoppingCartMutation) UserIDs() (ids []int) {
 func (m *ShoppingCartMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
-	m.removeduser = nil
 }
 
 // Where appends a list predicates to the ShoppingCartMutation builder.
@@ -2342,17 +2320,13 @@ func (m *ShoppingCartMutation) AddedEdges() []string {
 func (m *ShoppingCartMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case shoppingcart.EdgeBook:
-		ids := make([]ent.Value, 0, len(m.book))
-		for id := range m.book {
-			ids = append(ids, id)
+		if id := m.book; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case shoppingcart.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
-			ids = append(ids, id)
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -2360,12 +2334,6 @@ func (m *ShoppingCartMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ShoppingCartMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedbook != nil {
-		edges = append(edges, shoppingcart.EdgeBook)
-	}
-	if m.removeduser != nil {
-		edges = append(edges, shoppingcart.EdgeUser)
-	}
 	return edges
 }
 
@@ -2373,18 +2341,6 @@ func (m *ShoppingCartMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *ShoppingCartMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case shoppingcart.EdgeBook:
-		ids := make([]ent.Value, 0, len(m.removedbook))
-		for id := range m.removedbook {
-			ids = append(ids, id)
-		}
-		return ids
-	case shoppingcart.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -2417,6 +2373,12 @@ func (m *ShoppingCartMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *ShoppingCartMutation) ClearEdge(name string) error {
 	switch name {
+	case shoppingcart.EdgeBook:
+		m.ClearBook()
+		return nil
+	case shoppingcart.EdgeUser:
+		m.ClearUser()
+		return nil
 	}
 	return fmt.Errorf("unknown ShoppingCart unique edge %s", name)
 }
@@ -2438,17 +2400,23 @@ func (m *ShoppingCartMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	username      *string
-	password      *string
-	_Type         *user.Type
-	created_at    *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op                   Op
+	typ                  string
+	id                   *int
+	username             *string
+	password             *string
+	_Type                *user.Type
+	created_at           *time.Time
+	clearedFields        map[string]struct{}
+	_order               map[int]struct{}
+	removed_order        map[int]struct{}
+	cleared_order        bool
+	shopping_cart        map[int]struct{}
+	removedshopping_cart map[int]struct{}
+	clearedshopping_cart bool
+	done                 bool
+	oldValue             func(context.Context) (*User, error)
+	predicates           []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -2674,6 +2642,114 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// AddOrderIDs adds the "order" edge to the Order entity by ids.
+func (m *UserMutation) AddOrderIDs(ids ...int) {
+	if m._order == nil {
+		m._order = make(map[int]struct{})
+	}
+	for i := range ids {
+		m._order[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrder clears the "order" edge to the Order entity.
+func (m *UserMutation) ClearOrder() {
+	m.cleared_order = true
+}
+
+// OrderCleared reports if the "order" edge to the Order entity was cleared.
+func (m *UserMutation) OrderCleared() bool {
+	return m.cleared_order
+}
+
+// RemoveOrderIDs removes the "order" edge to the Order entity by IDs.
+func (m *UserMutation) RemoveOrderIDs(ids ...int) {
+	if m.removed_order == nil {
+		m.removed_order = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m._order, ids[i])
+		m.removed_order[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrder returns the removed IDs of the "order" edge to the Order entity.
+func (m *UserMutation) RemovedOrderIDs() (ids []int) {
+	for id := range m.removed_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrderIDs returns the "order" edge IDs in the mutation.
+func (m *UserMutation) OrderIDs() (ids []int) {
+	for id := range m._order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrder resets all changes to the "order" edge.
+func (m *UserMutation) ResetOrder() {
+	m._order = nil
+	m.cleared_order = false
+	m.removed_order = nil
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by ids.
+func (m *UserMutation) AddShoppingCartIDs(ids ...int) {
+	if m.shopping_cart == nil {
+		m.shopping_cart = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.shopping_cart[ids[i]] = struct{}{}
+	}
+}
+
+// ClearShoppingCart clears the "shopping_cart" edge to the ShoppingCart entity.
+func (m *UserMutation) ClearShoppingCart() {
+	m.clearedshopping_cart = true
+}
+
+// ShoppingCartCleared reports if the "shopping_cart" edge to the ShoppingCart entity was cleared.
+func (m *UserMutation) ShoppingCartCleared() bool {
+	return m.clearedshopping_cart
+}
+
+// RemoveShoppingCartIDs removes the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (m *UserMutation) RemoveShoppingCartIDs(ids ...int) {
+	if m.removedshopping_cart == nil {
+		m.removedshopping_cart = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.shopping_cart, ids[i])
+		m.removedshopping_cart[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedShoppingCart returns the removed IDs of the "shopping_cart" edge to the ShoppingCart entity.
+func (m *UserMutation) RemovedShoppingCartIDs() (ids []int) {
+	for id := range m.removedshopping_cart {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ShoppingCartIDs returns the "shopping_cart" edge IDs in the mutation.
+func (m *UserMutation) ShoppingCartIDs() (ids []int) {
+	for id := range m.shopping_cart {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetShoppingCart resets all changes to the "shopping_cart" edge.
+func (m *UserMutation) ResetShoppingCart() {
+	m.shopping_cart = nil
+	m.clearedshopping_cart = false
+	m.removedshopping_cart = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -2843,48 +2919,110 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m._order != nil {
+		edges = append(edges, user.EdgeOrder)
+	}
+	if m.shopping_cart != nil {
+		edges = append(edges, user.EdgeShoppingCart)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case user.EdgeOrder:
+		ids := make([]ent.Value, 0, len(m._order))
+		for id := range m._order {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeShoppingCart:
+		ids := make([]ent.Value, 0, len(m.shopping_cart))
+		for id := range m.shopping_cart {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.removed_order != nil {
+		edges = append(edges, user.EdgeOrder)
+	}
+	if m.removedshopping_cart != nil {
+		edges = append(edges, user.EdgeShoppingCart)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case user.EdgeOrder:
+		ids := make([]ent.Value, 0, len(m.removed_order))
+		for id := range m.removed_order {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeShoppingCart:
+		ids := make([]ent.Value, 0, len(m.removedshopping_cart))
+		for id := range m.removedshopping_cart {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.cleared_order {
+		edges = append(edges, user.EdgeOrder)
+	}
+	if m.clearedshopping_cart {
+		edges = append(edges, user.EdgeShoppingCart)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
+	switch name {
+	case user.EdgeOrder:
+		return m.cleared_order
+	case user.EdgeShoppingCart:
+		return m.clearedshopping_cart
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
+	switch name {
+	case user.EdgeOrder:
+		m.ResetOrder()
+		return nil
+	case user.EdgeShoppingCart:
+		m.ResetShoppingCart()
+		return nil
+	}
 	return fmt.Errorf("unknown User edge %s", name)
 }

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"back/repository/ent/book"
+	"back/repository/ent/category"
 	"fmt"
 	"strings"
 	"time"
@@ -18,14 +19,10 @@ type Book struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Price holds the value of the "price" field.
-	Price int `json:"price,omitempty"`
-	// SurplusCatch holds the value of the "surplus_catch" field.
-	SurplusCatch int `json:"surplus_catch,omitempty"`
 	// Author holds the value of the "author" field.
 	Author string `json:"author,omitempty"`
-	// Describe holds the value of the "describe" field.
-	Describe string `json:"describe,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
 	// Ebook holds the value of the "ebook" field.
 	Ebook string `json:"ebook,omitempty"`
 	// Cover holds the value of the "cover" field.
@@ -34,27 +31,53 @@ type Book struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BookQuery when eager-loading is set.
-	Edges              BookEdges `json:"edges"`
-	order_book         *int
-	shopping_cart_book *int
+	Edges         BookEdges `json:"edges"`
+	category_book *int
 }
 
 // BookEdges holds the relations/edges for other nodes in the graph.
 type BookEdges struct {
 	// Category holds the value of the category edge.
-	Category []*Category `json:"category,omitempty"`
+	Category *Category `json:"category,omitempty"`
+	// Order holds the value of the order edge.
+	Order []*Order `json:"order,omitempty"`
+	// ShoppingCart holds the value of the shopping_cart edge.
+	ShoppingCart []*ShoppingCart `json:"shopping_cart,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 }
 
 // CategoryOrErr returns the Category value or an error if the edge
-// was not loaded in eager-loading.
-func (e BookEdges) CategoryOrErr() ([]*Category, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BookEdges) CategoryOrErr() (*Category, error) {
 	if e.loadedTypes[0] {
+		if e.Category == nil {
+			// The edge category was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: category.Label}
+		}
 		return e.Category, nil
 	}
 	return nil, &NotLoadedError{edge: "category"}
+}
+
+// OrderOrErr returns the Order value or an error if the edge
+// was not loaded in eager-loading.
+func (e BookEdges) OrderOrErr() ([]*Order, error) {
+	if e.loadedTypes[1] {
+		return e.Order, nil
+	}
+	return nil, &NotLoadedError{edge: "order"}
+}
+
+// ShoppingCartOrErr returns the ShoppingCart value or an error if the edge
+// was not loaded in eager-loading.
+func (e BookEdges) ShoppingCartOrErr() ([]*ShoppingCart, error) {
+	if e.loadedTypes[2] {
+		return e.ShoppingCart, nil
+	}
+	return nil, &NotLoadedError{edge: "shopping_cart"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -62,15 +85,13 @@ func (*Book) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case book.FieldID, book.FieldPrice, book.FieldSurplusCatch:
+		case book.FieldID:
 			values[i] = new(sql.NullInt64)
-		case book.FieldName, book.FieldAuthor, book.FieldDescribe, book.FieldEbook, book.FieldCover:
+		case book.FieldName, book.FieldAuthor, book.FieldDescription, book.FieldEbook, book.FieldCover:
 			values[i] = new(sql.NullString)
 		case book.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case book.ForeignKeys[0]: // order_book
-			values[i] = new(sql.NullInt64)
-		case book.ForeignKeys[1]: // shopping_cart_book
+		case book.ForeignKeys[0]: // category_book
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Book", columns[i])
@@ -99,29 +120,17 @@ func (b *Book) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				b.Name = value.String
 			}
-		case book.FieldPrice:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field price", values[i])
-			} else if value.Valid {
-				b.Price = int(value.Int64)
-			}
-		case book.FieldSurplusCatch:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field surplus_catch", values[i])
-			} else if value.Valid {
-				b.SurplusCatch = int(value.Int64)
-			}
 		case book.FieldAuthor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field author", values[i])
 			} else if value.Valid {
 				b.Author = value.String
 			}
-		case book.FieldDescribe:
+		case book.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field describe", values[i])
+				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				b.Describe = value.String
+				b.Description = value.String
 			}
 		case book.FieldEbook:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -143,17 +152,10 @@ func (b *Book) assignValues(columns []string, values []interface{}) error {
 			}
 		case book.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field order_book", value)
+				return fmt.Errorf("unexpected type %T for edge-field category_book", value)
 			} else if value.Valid {
-				b.order_book = new(int)
-				*b.order_book = int(value.Int64)
-			}
-		case book.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field shopping_cart_book", value)
-			} else if value.Valid {
-				b.shopping_cart_book = new(int)
-				*b.shopping_cart_book = int(value.Int64)
+				b.category_book = new(int)
+				*b.category_book = int(value.Int64)
 			}
 		}
 	}
@@ -163,6 +165,16 @@ func (b *Book) assignValues(columns []string, values []interface{}) error {
 // QueryCategory queries the "category" edge of the Book entity.
 func (b *Book) QueryCategory() *CategoryQuery {
 	return (&BookClient{config: b.config}).QueryCategory(b)
+}
+
+// QueryOrder queries the "order" edge of the Book entity.
+func (b *Book) QueryOrder() *OrderQuery {
+	return (&BookClient{config: b.config}).QueryOrder(b)
+}
+
+// QueryShoppingCart queries the "shopping_cart" edge of the Book entity.
+func (b *Book) QueryShoppingCart() *ShoppingCartQuery {
+	return (&BookClient{config: b.config}).QueryShoppingCart(b)
 }
 
 // Update returns a builder for updating this Book.
@@ -190,14 +202,10 @@ func (b *Book) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", b.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(b.Name)
-	builder.WriteString(", price=")
-	builder.WriteString(fmt.Sprintf("%v", b.Price))
-	builder.WriteString(", surplus_catch=")
-	builder.WriteString(fmt.Sprintf("%v", b.SurplusCatch))
 	builder.WriteString(", author=")
 	builder.WriteString(b.Author)
-	builder.WriteString(", describe=")
-	builder.WriteString(b.Describe)
+	builder.WriteString(", description=")
+	builder.WriteString(b.Description)
 	builder.WriteString(", ebook=")
 	builder.WriteString(b.Ebook)
 	builder.WriteString(", cover=")

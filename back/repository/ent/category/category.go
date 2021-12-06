@@ -9,8 +9,17 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// EdgeBook holds the string denoting the book edge name in mutations.
+	EdgeBook = "book"
 	// Table holds the table name of the category in the database.
 	Table = "categories"
+	// BookTable is the table that holds the book relation/edge.
+	BookTable = "books"
+	// BookInverseTable is the table name for the Book entity.
+	// It exists in this package in order to avoid circular dependency with the "book" package.
+	BookInverseTable = "books"
+	// BookColumn is the table column denoting the book relation/edge.
+	BookColumn = "category_book"
 )
 
 // Columns holds all SQL columns for category fields.
@@ -19,21 +28,10 @@ var Columns = []string{
 	FieldName,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "categories"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"book_category",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

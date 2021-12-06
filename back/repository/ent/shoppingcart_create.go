@@ -56,34 +56,42 @@ func (scc *ShoppingCartCreate) SetNillableUpdateAt(t *time.Time) *ShoppingCartCr
 	return scc
 }
 
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (scc *ShoppingCartCreate) AddBookIDs(ids ...int) *ShoppingCartCreate {
-	scc.mutation.AddBookIDs(ids...)
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (scc *ShoppingCartCreate) SetBookID(id int) *ShoppingCartCreate {
+	scc.mutation.SetBookID(id)
 	return scc
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (scc *ShoppingCartCreate) AddBook(b ...*Book) *ShoppingCartCreate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (scc *ShoppingCartCreate) SetNillableBookID(id *int) *ShoppingCartCreate {
+	if id != nil {
+		scc = scc.SetBookID(*id)
 	}
-	return scc.AddBookIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (scc *ShoppingCartCreate) AddUserIDs(ids ...int) *ShoppingCartCreate {
-	scc.mutation.AddUserIDs(ids...)
 	return scc
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (scc *ShoppingCartCreate) AddUser(u ...*User) *ShoppingCartCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetBook sets the "book" edge to the Book entity.
+func (scc *ShoppingCartCreate) SetBook(b *Book) *ShoppingCartCreate {
+	return scc.SetBookID(b.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (scc *ShoppingCartCreate) SetUserID(id int) *ShoppingCartCreate {
+	scc.mutation.SetUserID(id)
+	return scc
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (scc *ShoppingCartCreate) SetNillableUserID(id *int) *ShoppingCartCreate {
+	if id != nil {
+		scc = scc.SetUserID(*id)
 	}
-	return scc.AddUserIDs(ids...)
+	return scc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (scc *ShoppingCartCreate) SetUser(u *User) *ShoppingCartCreate {
+	return scc.SetUserID(u.ID)
 }
 
 // Mutation returns the ShoppingCartMutation object of the builder.
@@ -231,8 +239,8 @@ func (scc *ShoppingCartCreate) createSpec() (*ShoppingCart, *sqlgraph.CreateSpec
 	}
 	if nodes := scc.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.BookTable,
 			Columns: []string{shoppingcart.BookColumn},
 			Bidi:    false,
@@ -246,12 +254,13 @@ func (scc *ShoppingCartCreate) createSpec() (*ShoppingCart, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.book_shopping_cart = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := scc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   shoppingcart.UserTable,
 			Columns: []string{shoppingcart.UserColumn},
 			Bidi:    false,
@@ -265,6 +274,7 @@ func (scc *ShoppingCartCreate) createSpec() (*ShoppingCart, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_shopping_cart = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

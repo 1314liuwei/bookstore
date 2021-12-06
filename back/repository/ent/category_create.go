@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"back/repository/ent/book"
 	"back/repository/ent/category"
 	"context"
 	"errors"
@@ -23,6 +24,21 @@ type CategoryCreate struct {
 func (cc *CategoryCreate) SetName(s string) *CategoryCreate {
 	cc.mutation.SetName(s)
 	return cc
+}
+
+// AddBookIDs adds the "book" edge to the Book entity by IDs.
+func (cc *CategoryCreate) AddBookIDs(ids ...int) *CategoryCreate {
+	cc.mutation.AddBookIDs(ids...)
+	return cc
+}
+
+// AddBook adds the "book" edges to the Book entity.
+func (cc *CategoryCreate) AddBook(b ...*Book) *CategoryCreate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return cc.AddBookIDs(ids...)
 }
 
 // Mutation returns the CategoryMutation object of the builder.
@@ -132,6 +148,25 @@ func (cc *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 			Column: category.FieldName,
 		})
 		_node.Name = value
+	}
+	if nodes := cc.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

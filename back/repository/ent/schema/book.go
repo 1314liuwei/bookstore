@@ -16,10 +16,8 @@ type Book struct {
 func (Book) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique(),
-		field.Int("price"),
-		field.Int("surplus_catch"),
 		field.String("author"),
-		field.String("describe"),
+		field.Text("description"),
 		field.String("ebook"),
 		field.String("cover"),
 		field.Time("created_at").Default(time.Now).Immutable(),
@@ -29,6 +27,8 @@ func (Book) Fields() []ent.Field {
 // Edges of the Book.
 func (Book) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("category", Category.Type),
+		edge.From("category", Category.Type).Ref("book").Unique(),
+		edge.To("order", Order.Type),
+		edge.To("shopping_cart", ShoppingCart.Type),
 	}
 }

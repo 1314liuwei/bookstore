@@ -62,34 +62,42 @@ func (oc *OrderCreate) SetNillableUpdateAt(t *time.Time) *OrderCreate {
 	return oc
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (oc *OrderCreate) AddUserIDs(ids ...int) *OrderCreate {
-	oc.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (oc *OrderCreate) SetUserID(id int) *OrderCreate {
+	oc.mutation.SetUserID(id)
 	return oc
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (oc *OrderCreate) AddUser(u ...*User) *OrderCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (oc *OrderCreate) SetNillableUserID(id *int) *OrderCreate {
+	if id != nil {
+		oc = oc.SetUserID(*id)
 	}
-	return oc.AddUserIDs(ids...)
-}
-
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (oc *OrderCreate) AddBookIDs(ids ...int) *OrderCreate {
-	oc.mutation.AddBookIDs(ids...)
 	return oc
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (oc *OrderCreate) AddBook(b ...*Book) *OrderCreate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetUser sets the "user" edge to the User entity.
+func (oc *OrderCreate) SetUser(u *User) *OrderCreate {
+	return oc.SetUserID(u.ID)
+}
+
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (oc *OrderCreate) SetBookID(id int) *OrderCreate {
+	oc.mutation.SetBookID(id)
+	return oc
+}
+
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (oc *OrderCreate) SetNillableBookID(id *int) *OrderCreate {
+	if id != nil {
+		oc = oc.SetBookID(*id)
 	}
-	return oc.AddBookIDs(ids...)
+	return oc
+}
+
+// SetBook sets the "book" edge to the Book entity.
+func (oc *OrderCreate) SetBook(b *Book) *OrderCreate {
+	return oc.SetBookID(b.ID)
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -253,8 +261,8 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	}
 	if nodes := oc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.UserTable,
 			Columns: []string{order.UserColumn},
 			Bidi:    false,
@@ -268,12 +276,13 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_order = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := oc.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.BookTable,
 			Columns: []string{order.BookColumn},
 			Bidi:    false,
@@ -287,6 +296,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.book_order = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

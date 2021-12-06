@@ -348,7 +348,7 @@ func HasBook() predicate.ShoppingCart {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(BookTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BookTable, BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, BookTable, BookColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -360,7 +360,7 @@ func HasBookWith(preds ...predicate.Book) predicate.ShoppingCart {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(BookInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BookTable, BookColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, BookTable, BookColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -376,7 +376,7 @@ func HasUser() predicate.ShoppingCart {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -388,7 +388,7 @@ func HasUserWith(preds ...predicate.User) predicate.ShoppingCart {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

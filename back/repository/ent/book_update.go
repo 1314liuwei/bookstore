@@ -5,7 +5,9 @@ package ent
 import (
 	"back/repository/ent/book"
 	"back/repository/ent/category"
+	"back/repository/ent/order"
 	"back/repository/ent/predicate"
+	"back/repository/ent/shoppingcart"
 	"context"
 	"fmt"
 
@@ -33,41 +35,15 @@ func (bu *BookUpdate) SetName(s string) *BookUpdate {
 	return bu
 }
 
-// SetPrice sets the "price" field.
-func (bu *BookUpdate) SetPrice(i int) *BookUpdate {
-	bu.mutation.ResetPrice()
-	bu.mutation.SetPrice(i)
-	return bu
-}
-
-// AddPrice adds i to the "price" field.
-func (bu *BookUpdate) AddPrice(i int) *BookUpdate {
-	bu.mutation.AddPrice(i)
-	return bu
-}
-
-// SetSurplusCatch sets the "surplus_catch" field.
-func (bu *BookUpdate) SetSurplusCatch(i int) *BookUpdate {
-	bu.mutation.ResetSurplusCatch()
-	bu.mutation.SetSurplusCatch(i)
-	return bu
-}
-
-// AddSurplusCatch adds i to the "surplus_catch" field.
-func (bu *BookUpdate) AddSurplusCatch(i int) *BookUpdate {
-	bu.mutation.AddSurplusCatch(i)
-	return bu
-}
-
 // SetAuthor sets the "author" field.
 func (bu *BookUpdate) SetAuthor(s string) *BookUpdate {
 	bu.mutation.SetAuthor(s)
 	return bu
 }
 
-// SetDescribe sets the "describe" field.
-func (bu *BookUpdate) SetDescribe(s string) *BookUpdate {
-	bu.mutation.SetDescribe(s)
+// SetDescription sets the "description" field.
+func (bu *BookUpdate) SetDescription(s string) *BookUpdate {
+	bu.mutation.SetDescription(s)
 	return bu
 }
 
@@ -83,19 +59,53 @@ func (bu *BookUpdate) SetCover(s string) *BookUpdate {
 	return bu
 }
 
-// AddCategoryIDs adds the "category" edge to the Category entity by IDs.
-func (bu *BookUpdate) AddCategoryIDs(ids ...int) *BookUpdate {
-	bu.mutation.AddCategoryIDs(ids...)
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (bu *BookUpdate) SetCategoryID(id int) *BookUpdate {
+	bu.mutation.SetCategoryID(id)
 	return bu
 }
 
-// AddCategory adds the "category" edges to the Category entity.
-func (bu *BookUpdate) AddCategory(c ...*Category) *BookUpdate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
+// SetNillableCategoryID sets the "category" edge to the Category entity by ID if the given value is not nil.
+func (bu *BookUpdate) SetNillableCategoryID(id *int) *BookUpdate {
+	if id != nil {
+		bu = bu.SetCategoryID(*id)
 	}
-	return bu.AddCategoryIDs(ids...)
+	return bu
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (bu *BookUpdate) SetCategory(c *Category) *BookUpdate {
+	return bu.SetCategoryID(c.ID)
+}
+
+// AddOrderIDs adds the "order" edge to the Order entity by IDs.
+func (bu *BookUpdate) AddOrderIDs(ids ...int) *BookUpdate {
+	bu.mutation.AddOrderIDs(ids...)
+	return bu
+}
+
+// AddOrder adds the "order" edges to the Order entity.
+func (bu *BookUpdate) AddOrder(o ...*Order) *BookUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return bu.AddOrderIDs(ids...)
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (bu *BookUpdate) AddShoppingCartIDs(ids ...int) *BookUpdate {
+	bu.mutation.AddShoppingCartIDs(ids...)
+	return bu
+}
+
+// AddShoppingCart adds the "shopping_cart" edges to the ShoppingCart entity.
+func (bu *BookUpdate) AddShoppingCart(s ...*ShoppingCart) *BookUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return bu.AddShoppingCartIDs(ids...)
 }
 
 // Mutation returns the BookMutation object of the builder.
@@ -103,25 +113,52 @@ func (bu *BookUpdate) Mutation() *BookMutation {
 	return bu.mutation
 }
 
-// ClearCategory clears all "category" edges to the Category entity.
+// ClearCategory clears the "category" edge to the Category entity.
 func (bu *BookUpdate) ClearCategory() *BookUpdate {
 	bu.mutation.ClearCategory()
 	return bu
 }
 
-// RemoveCategoryIDs removes the "category" edge to Category entities by IDs.
-func (bu *BookUpdate) RemoveCategoryIDs(ids ...int) *BookUpdate {
-	bu.mutation.RemoveCategoryIDs(ids...)
+// ClearOrder clears all "order" edges to the Order entity.
+func (bu *BookUpdate) ClearOrder() *BookUpdate {
+	bu.mutation.ClearOrder()
 	return bu
 }
 
-// RemoveCategory removes "category" edges to Category entities.
-func (bu *BookUpdate) RemoveCategory(c ...*Category) *BookUpdate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
+// RemoveOrderIDs removes the "order" edge to Order entities by IDs.
+func (bu *BookUpdate) RemoveOrderIDs(ids ...int) *BookUpdate {
+	bu.mutation.RemoveOrderIDs(ids...)
+	return bu
+}
+
+// RemoveOrder removes "order" edges to Order entities.
+func (bu *BookUpdate) RemoveOrder(o ...*Order) *BookUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return bu.RemoveCategoryIDs(ids...)
+	return bu.RemoveOrderIDs(ids...)
+}
+
+// ClearShoppingCart clears all "shopping_cart" edges to the ShoppingCart entity.
+func (bu *BookUpdate) ClearShoppingCart() *BookUpdate {
+	bu.mutation.ClearShoppingCart()
+	return bu
+}
+
+// RemoveShoppingCartIDs removes the "shopping_cart" edge to ShoppingCart entities by IDs.
+func (bu *BookUpdate) RemoveShoppingCartIDs(ids ...int) *BookUpdate {
+	bu.mutation.RemoveShoppingCartIDs(ids...)
+	return bu
+}
+
+// RemoveShoppingCart removes "shopping_cart" edges to ShoppingCart entities.
+func (bu *BookUpdate) RemoveShoppingCart(s ...*ShoppingCart) *BookUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return bu.RemoveShoppingCartIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -203,34 +240,6 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: book.FieldName,
 		})
 	}
-	if value, ok := bu.mutation.Price(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldPrice,
-		})
-	}
-	if value, ok := bu.mutation.AddedPrice(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldPrice,
-		})
-	}
-	if value, ok := bu.mutation.SurplusCatch(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldSurplusCatch,
-		})
-	}
-	if value, ok := bu.mutation.AddedSurplusCatch(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldSurplusCatch,
-		})
-	}
 	if value, ok := bu.mutation.Author(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -238,11 +247,11 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: book.FieldAuthor,
 		})
 	}
-	if value, ok := bu.mutation.Describe(); ok {
+	if value, ok := bu.mutation.Description(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: book.FieldDescribe,
+			Column: book.FieldDescription,
 		})
 	}
 	if value, ok := bu.mutation.Ebook(); ok {
@@ -261,8 +270,8 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if bu.mutation.CategoryCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   book.CategoryTable,
 			Columns: []string{book.CategoryColumn},
 			Bidi:    false,
@@ -275,10 +284,10 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := bu.mutation.RemovedCategoryIDs(); len(nodes) > 0 && !bu.mutation.CategoryCleared() {
+	if nodes := bu.mutation.CategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   book.CategoryTable,
 			Columns: []string{book.CategoryColumn},
 			Bidi:    false,
@@ -292,19 +301,108 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := bu.mutation.CategoryIDs(); len(nodes) > 0 {
+	if bu.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   book.CategoryTable,
-			Columns: []string{book.CategoryColumn},
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: category.FieldID,
+					Column: order.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RemovedOrderIDs(); len(nodes) > 0 && !bu.mutation.OrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.OrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if bu.mutation.ShoppingCartCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RemovedShoppingCartIDs(); len(nodes) > 0 && !bu.mutation.ShoppingCartCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.ShoppingCartIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
 				},
 			},
 		}
@@ -338,41 +436,15 @@ func (buo *BookUpdateOne) SetName(s string) *BookUpdateOne {
 	return buo
 }
 
-// SetPrice sets the "price" field.
-func (buo *BookUpdateOne) SetPrice(i int) *BookUpdateOne {
-	buo.mutation.ResetPrice()
-	buo.mutation.SetPrice(i)
-	return buo
-}
-
-// AddPrice adds i to the "price" field.
-func (buo *BookUpdateOne) AddPrice(i int) *BookUpdateOne {
-	buo.mutation.AddPrice(i)
-	return buo
-}
-
-// SetSurplusCatch sets the "surplus_catch" field.
-func (buo *BookUpdateOne) SetSurplusCatch(i int) *BookUpdateOne {
-	buo.mutation.ResetSurplusCatch()
-	buo.mutation.SetSurplusCatch(i)
-	return buo
-}
-
-// AddSurplusCatch adds i to the "surplus_catch" field.
-func (buo *BookUpdateOne) AddSurplusCatch(i int) *BookUpdateOne {
-	buo.mutation.AddSurplusCatch(i)
-	return buo
-}
-
 // SetAuthor sets the "author" field.
 func (buo *BookUpdateOne) SetAuthor(s string) *BookUpdateOne {
 	buo.mutation.SetAuthor(s)
 	return buo
 }
 
-// SetDescribe sets the "describe" field.
-func (buo *BookUpdateOne) SetDescribe(s string) *BookUpdateOne {
-	buo.mutation.SetDescribe(s)
+// SetDescription sets the "description" field.
+func (buo *BookUpdateOne) SetDescription(s string) *BookUpdateOne {
+	buo.mutation.SetDescription(s)
 	return buo
 }
 
@@ -388,19 +460,53 @@ func (buo *BookUpdateOne) SetCover(s string) *BookUpdateOne {
 	return buo
 }
 
-// AddCategoryIDs adds the "category" edge to the Category entity by IDs.
-func (buo *BookUpdateOne) AddCategoryIDs(ids ...int) *BookUpdateOne {
-	buo.mutation.AddCategoryIDs(ids...)
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (buo *BookUpdateOne) SetCategoryID(id int) *BookUpdateOne {
+	buo.mutation.SetCategoryID(id)
 	return buo
 }
 
-// AddCategory adds the "category" edges to the Category entity.
-func (buo *BookUpdateOne) AddCategory(c ...*Category) *BookUpdateOne {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
+// SetNillableCategoryID sets the "category" edge to the Category entity by ID if the given value is not nil.
+func (buo *BookUpdateOne) SetNillableCategoryID(id *int) *BookUpdateOne {
+	if id != nil {
+		buo = buo.SetCategoryID(*id)
 	}
-	return buo.AddCategoryIDs(ids...)
+	return buo
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (buo *BookUpdateOne) SetCategory(c *Category) *BookUpdateOne {
+	return buo.SetCategoryID(c.ID)
+}
+
+// AddOrderIDs adds the "order" edge to the Order entity by IDs.
+func (buo *BookUpdateOne) AddOrderIDs(ids ...int) *BookUpdateOne {
+	buo.mutation.AddOrderIDs(ids...)
+	return buo
+}
+
+// AddOrder adds the "order" edges to the Order entity.
+func (buo *BookUpdateOne) AddOrder(o ...*Order) *BookUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return buo.AddOrderIDs(ids...)
+}
+
+// AddShoppingCartIDs adds the "shopping_cart" edge to the ShoppingCart entity by IDs.
+func (buo *BookUpdateOne) AddShoppingCartIDs(ids ...int) *BookUpdateOne {
+	buo.mutation.AddShoppingCartIDs(ids...)
+	return buo
+}
+
+// AddShoppingCart adds the "shopping_cart" edges to the ShoppingCart entity.
+func (buo *BookUpdateOne) AddShoppingCart(s ...*ShoppingCart) *BookUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return buo.AddShoppingCartIDs(ids...)
 }
 
 // Mutation returns the BookMutation object of the builder.
@@ -408,25 +514,52 @@ func (buo *BookUpdateOne) Mutation() *BookMutation {
 	return buo.mutation
 }
 
-// ClearCategory clears all "category" edges to the Category entity.
+// ClearCategory clears the "category" edge to the Category entity.
 func (buo *BookUpdateOne) ClearCategory() *BookUpdateOne {
 	buo.mutation.ClearCategory()
 	return buo
 }
 
-// RemoveCategoryIDs removes the "category" edge to Category entities by IDs.
-func (buo *BookUpdateOne) RemoveCategoryIDs(ids ...int) *BookUpdateOne {
-	buo.mutation.RemoveCategoryIDs(ids...)
+// ClearOrder clears all "order" edges to the Order entity.
+func (buo *BookUpdateOne) ClearOrder() *BookUpdateOne {
+	buo.mutation.ClearOrder()
 	return buo
 }
 
-// RemoveCategory removes "category" edges to Category entities.
-func (buo *BookUpdateOne) RemoveCategory(c ...*Category) *BookUpdateOne {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
+// RemoveOrderIDs removes the "order" edge to Order entities by IDs.
+func (buo *BookUpdateOne) RemoveOrderIDs(ids ...int) *BookUpdateOne {
+	buo.mutation.RemoveOrderIDs(ids...)
+	return buo
+}
+
+// RemoveOrder removes "order" edges to Order entities.
+func (buo *BookUpdateOne) RemoveOrder(o ...*Order) *BookUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return buo.RemoveCategoryIDs(ids...)
+	return buo.RemoveOrderIDs(ids...)
+}
+
+// ClearShoppingCart clears all "shopping_cart" edges to the ShoppingCart entity.
+func (buo *BookUpdateOne) ClearShoppingCart() *BookUpdateOne {
+	buo.mutation.ClearShoppingCart()
+	return buo
+}
+
+// RemoveShoppingCartIDs removes the "shopping_cart" edge to ShoppingCart entities by IDs.
+func (buo *BookUpdateOne) RemoveShoppingCartIDs(ids ...int) *BookUpdateOne {
+	buo.mutation.RemoveShoppingCartIDs(ids...)
+	return buo
+}
+
+// RemoveShoppingCart removes "shopping_cart" edges to ShoppingCart entities.
+func (buo *BookUpdateOne) RemoveShoppingCart(s ...*ShoppingCart) *BookUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return buo.RemoveShoppingCartIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -532,34 +665,6 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 			Column: book.FieldName,
 		})
 	}
-	if value, ok := buo.mutation.Price(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldPrice,
-		})
-	}
-	if value, ok := buo.mutation.AddedPrice(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldPrice,
-		})
-	}
-	if value, ok := buo.mutation.SurplusCatch(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldSurplusCatch,
-		})
-	}
-	if value, ok := buo.mutation.AddedSurplusCatch(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: book.FieldSurplusCatch,
-		})
-	}
 	if value, ok := buo.mutation.Author(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -567,11 +672,11 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 			Column: book.FieldAuthor,
 		})
 	}
-	if value, ok := buo.mutation.Describe(); ok {
+	if value, ok := buo.mutation.Description(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: book.FieldDescribe,
+			Column: book.FieldDescription,
 		})
 	}
 	if value, ok := buo.mutation.Ebook(); ok {
@@ -590,8 +695,8 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 	}
 	if buo.mutation.CategoryCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   book.CategoryTable,
 			Columns: []string{book.CategoryColumn},
 			Bidi:    false,
@@ -604,10 +709,10 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := buo.mutation.RemovedCategoryIDs(); len(nodes) > 0 && !buo.mutation.CategoryCleared() {
+	if nodes := buo.mutation.CategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   book.CategoryTable,
 			Columns: []string{book.CategoryColumn},
 			Bidi:    false,
@@ -621,19 +726,108 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := buo.mutation.CategoryIDs(); len(nodes) > 0 {
+	if buo.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   book.CategoryTable,
-			Columns: []string{book.CategoryColumn},
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: category.FieldID,
+					Column: order.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RemovedOrderIDs(); len(nodes) > 0 && !buo.mutation.OrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.OrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.OrderTable,
+			Columns: []string{book.OrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: order.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.ShoppingCartCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RemovedShoppingCartIDs(); len(nodes) > 0 && !buo.mutation.ShoppingCartCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.ShoppingCartIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   book.ShoppingCartTable,
+			Columns: []string{book.ShoppingCartColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: shoppingcart.FieldID,
 				},
 			},
 		}

@@ -54,34 +54,42 @@ func (ou *OrderUpdate) SetUpdateAt(t time.Time) *OrderUpdate {
 	return ou
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (ou *OrderUpdate) AddUserIDs(ids ...int) *OrderUpdate {
-	ou.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (ou *OrderUpdate) SetUserID(id int) *OrderUpdate {
+	ou.mutation.SetUserID(id)
 	return ou
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (ou *OrderUpdate) AddUser(u ...*User) *OrderUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (ou *OrderUpdate) SetNillableUserID(id *int) *OrderUpdate {
+	if id != nil {
+		ou = ou.SetUserID(*id)
 	}
-	return ou.AddUserIDs(ids...)
-}
-
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (ou *OrderUpdate) AddBookIDs(ids ...int) *OrderUpdate {
-	ou.mutation.AddBookIDs(ids...)
 	return ou
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (ou *OrderUpdate) AddBook(b ...*Book) *OrderUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetUser sets the "user" edge to the User entity.
+func (ou *OrderUpdate) SetUser(u *User) *OrderUpdate {
+	return ou.SetUserID(u.ID)
+}
+
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (ou *OrderUpdate) SetBookID(id int) *OrderUpdate {
+	ou.mutation.SetBookID(id)
+	return ou
+}
+
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (ou *OrderUpdate) SetNillableBookID(id *int) *OrderUpdate {
+	if id != nil {
+		ou = ou.SetBookID(*id)
 	}
-	return ou.AddBookIDs(ids...)
+	return ou
+}
+
+// SetBook sets the "book" edge to the Book entity.
+func (ou *OrderUpdate) SetBook(b *Book) *OrderUpdate {
+	return ou.SetBookID(b.ID)
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -89,46 +97,16 @@ func (ou *OrderUpdate) Mutation() *OrderMutation {
 	return ou.mutation
 }
 
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (ou *OrderUpdate) ClearUser() *OrderUpdate {
 	ou.mutation.ClearUser()
 	return ou
 }
 
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (ou *OrderUpdate) RemoveUserIDs(ids ...int) *OrderUpdate {
-	ou.mutation.RemoveUserIDs(ids...)
-	return ou
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (ou *OrderUpdate) RemoveUser(u ...*User) *OrderUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ou.RemoveUserIDs(ids...)
-}
-
-// ClearBook clears all "book" edges to the Book entity.
+// ClearBook clears the "book" edge to the Book entity.
 func (ou *OrderUpdate) ClearBook() *OrderUpdate {
 	ou.mutation.ClearBook()
 	return ou
-}
-
-// RemoveBookIDs removes the "book" edge to Book entities by IDs.
-func (ou *OrderUpdate) RemoveBookIDs(ids ...int) *OrderUpdate {
-	ou.mutation.RemoveBookIDs(ids...)
-	return ou
-}
-
-// RemoveBook removes "book" edges to Book entities.
-func (ou *OrderUpdate) RemoveBook(b ...*Book) *OrderUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return ou.RemoveBookIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -258,8 +236,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.UserTable,
 			Columns: []string{order.UserColumn},
 			Bidi:    false,
@@ -269,32 +247,13 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ou.mutation.RemovedUserIDs(); len(nodes) > 0 && !ou.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   order.UserTable,
-			Columns: []string{order.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ou.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.UserTable,
 			Columns: []string{order.UserColumn},
 			Bidi:    false,
@@ -312,8 +271,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.BookCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.BookTable,
 			Columns: []string{order.BookColumn},
 			Bidi:    false,
@@ -323,32 +282,13 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: book.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ou.mutation.RemovedBookIDs(); len(nodes) > 0 && !ou.mutation.BookCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   order.BookTable,
-			Columns: []string{order.BookColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: book.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ou.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.BookTable,
 			Columns: []string{order.BookColumn},
 			Bidi:    false,
@@ -408,34 +348,42 @@ func (ouo *OrderUpdateOne) SetUpdateAt(t time.Time) *OrderUpdateOne {
 	return ouo
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (ouo *OrderUpdateOne) AddUserIDs(ids ...int) *OrderUpdateOne {
-	ouo.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (ouo *OrderUpdateOne) SetUserID(id int) *OrderUpdateOne {
+	ouo.mutation.SetUserID(id)
 	return ouo
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (ouo *OrderUpdateOne) AddUser(u ...*User) *OrderUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableUserID(id *int) *OrderUpdateOne {
+	if id != nil {
+		ouo = ouo.SetUserID(*id)
 	}
-	return ouo.AddUserIDs(ids...)
-}
-
-// AddBookIDs adds the "book" edge to the Book entity by IDs.
-func (ouo *OrderUpdateOne) AddBookIDs(ids ...int) *OrderUpdateOne {
-	ouo.mutation.AddBookIDs(ids...)
 	return ouo
 }
 
-// AddBook adds the "book" edges to the Book entity.
-func (ouo *OrderUpdateOne) AddBook(b ...*Book) *OrderUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// SetUser sets the "user" edge to the User entity.
+func (ouo *OrderUpdateOne) SetUser(u *User) *OrderUpdateOne {
+	return ouo.SetUserID(u.ID)
+}
+
+// SetBookID sets the "book" edge to the Book entity by ID.
+func (ouo *OrderUpdateOne) SetBookID(id int) *OrderUpdateOne {
+	ouo.mutation.SetBookID(id)
+	return ouo
+}
+
+// SetNillableBookID sets the "book" edge to the Book entity by ID if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableBookID(id *int) *OrderUpdateOne {
+	if id != nil {
+		ouo = ouo.SetBookID(*id)
 	}
-	return ouo.AddBookIDs(ids...)
+	return ouo
+}
+
+// SetBook sets the "book" edge to the Book entity.
+func (ouo *OrderUpdateOne) SetBook(b *Book) *OrderUpdateOne {
+	return ouo.SetBookID(b.ID)
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -443,46 +391,16 @@ func (ouo *OrderUpdateOne) Mutation() *OrderMutation {
 	return ouo.mutation
 }
 
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (ouo *OrderUpdateOne) ClearUser() *OrderUpdateOne {
 	ouo.mutation.ClearUser()
 	return ouo
 }
 
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (ouo *OrderUpdateOne) RemoveUserIDs(ids ...int) *OrderUpdateOne {
-	ouo.mutation.RemoveUserIDs(ids...)
-	return ouo
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (ouo *OrderUpdateOne) RemoveUser(u ...*User) *OrderUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ouo.RemoveUserIDs(ids...)
-}
-
-// ClearBook clears all "book" edges to the Book entity.
+// ClearBook clears the "book" edge to the Book entity.
 func (ouo *OrderUpdateOne) ClearBook() *OrderUpdateOne {
 	ouo.mutation.ClearBook()
 	return ouo
-}
-
-// RemoveBookIDs removes the "book" edge to Book entities by IDs.
-func (ouo *OrderUpdateOne) RemoveBookIDs(ids ...int) *OrderUpdateOne {
-	ouo.mutation.RemoveBookIDs(ids...)
-	return ouo
-}
-
-// RemoveBook removes "book" edges to Book entities.
-func (ouo *OrderUpdateOne) RemoveBook(b ...*Book) *OrderUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return ouo.RemoveBookIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -636,8 +554,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	}
 	if ouo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.UserTable,
 			Columns: []string{order.UserColumn},
 			Bidi:    false,
@@ -647,32 +565,13 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ouo.mutation.RemovedUserIDs(); len(nodes) > 0 && !ouo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   order.UserTable,
-			Columns: []string{order.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ouo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.UserTable,
 			Columns: []string{order.UserColumn},
 			Bidi:    false,
@@ -690,8 +589,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	}
 	if ouo.mutation.BookCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.BookTable,
 			Columns: []string{order.BookColumn},
 			Bidi:    false,
@@ -701,32 +600,13 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 					Column: book.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ouo.mutation.RemovedBookIDs(); len(nodes) > 0 && !ouo.mutation.BookCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   order.BookTable,
-			Columns: []string{order.BookColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: book.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ouo.mutation.BookIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   order.BookTable,
 			Columns: []string{order.BookColumn},
 			Bidi:    false,

@@ -12,15 +12,12 @@ var (
 	BooksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "price", Type: field.TypeInt},
-		{Name: "surplus_catch", Type: field.TypeInt},
 		{Name: "author", Type: field.TypeString},
-		{Name: "describe", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Size: 2147483647},
 		{Name: "ebook", Type: field.TypeString},
 		{Name: "cover", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "order_book", Type: field.TypeInt, Nullable: true},
-		{Name: "shopping_cart_book", Type: field.TypeInt, Nullable: true},
+		{Name: "category_book", Type: field.TypeInt, Nullable: true},
 	}
 	// BooksTable holds the schema information for the "books" table.
 	BooksTable = &schema.Table{
@@ -29,15 +26,9 @@ var (
 		PrimaryKey: []*schema.Column{BooksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "books_orders_book",
-				Columns:    []*schema.Column{BooksColumns[9]},
-				RefColumns: []*schema.Column{OrdersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "books_shopping_carts_book",
-				Columns:    []*schema.Column{BooksColumns[10]},
-				RefColumns: []*schema.Column{ShoppingCartsColumns[0]},
+				Symbol:     "books_categories_book",
+				Columns:    []*schema.Column{BooksColumns[7]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -46,21 +37,12 @@ var (
 	CategoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "book_category", Type: field.TypeInt, Nullable: true},
 	}
 	// CategoriesTable holds the schema information for the "categories" table.
 	CategoriesTable = &schema.Table{
 		Name:       "categories",
 		Columns:    CategoriesColumns,
 		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "categories_books_category",
-				Columns:    []*schema.Column{CategoriesColumns[2]},
-				RefColumns: []*schema.Column{BooksColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
@@ -69,12 +51,28 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"completed", "to_be_paid", "transferring"}},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "update_at", Type: field.TypeTime},
+		{Name: "book_order", Type: field.TypeInt, Nullable: true},
+		{Name: "user_order", Type: field.TypeInt, Nullable: true},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
 		Name:       "orders",
 		Columns:    OrdersColumns,
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "orders_books_order",
+				Columns:    []*schema.Column{OrdersColumns[5]},
+				RefColumns: []*schema.Column{BooksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "orders_users_order",
+				Columns:    []*schema.Column{OrdersColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ShoppingCartsColumns holds the columns for the "shopping_carts" table.
 	ShoppingCartsColumns = []*schema.Column{
@@ -82,12 +80,28 @@ var (
 		{Name: "amount", Type: field.TypeInt},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "update_at", Type: field.TypeTime},
+		{Name: "book_shopping_cart", Type: field.TypeInt, Nullable: true},
+		{Name: "user_shopping_cart", Type: field.TypeInt, Nullable: true},
 	}
 	// ShoppingCartsTable holds the schema information for the "shopping_carts" table.
 	ShoppingCartsTable = &schema.Table{
 		Name:       "shopping_carts",
 		Columns:    ShoppingCartsColumns,
 		PrimaryKey: []*schema.Column{ShoppingCartsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "shopping_carts_books_shopping_cart",
+				Columns:    []*schema.Column{ShoppingCartsColumns[4]},
+				RefColumns: []*schema.Column{BooksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "shopping_carts_users_shopping_cart",
+				Columns:    []*schema.Column{ShoppingCartsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -96,28 +110,12 @@ var (
 		{Name: "password", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"normal", "vip", "admin"}},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "order_user", Type: field.TypeInt, Nullable: true},
-		{Name: "shopping_cart_user", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "users_orders_user",
-				Columns:    []*schema.Column{UsersColumns[5]},
-				RefColumns: []*schema.Column{OrdersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "users_shopping_carts_user",
-				Columns:    []*schema.Column{UsersColumns[6]},
-				RefColumns: []*schema.Column{ShoppingCartsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
@@ -130,9 +128,9 @@ var (
 )
 
 func init() {
-	BooksTable.ForeignKeys[0].RefTable = OrdersTable
-	BooksTable.ForeignKeys[1].RefTable = ShoppingCartsTable
-	CategoriesTable.ForeignKeys[0].RefTable = BooksTable
-	UsersTable.ForeignKeys[0].RefTable = OrdersTable
-	UsersTable.ForeignKeys[1].RefTable = ShoppingCartsTable
+	BooksTable.ForeignKeys[0].RefTable = CategoriesTable
+	OrdersTable.ForeignKeys[0].RefTable = BooksTable
+	OrdersTable.ForeignKeys[1].RefTable = UsersTable
+	ShoppingCartsTable.ForeignKeys[0].RefTable = BooksTable
+	ShoppingCartsTable.ForeignKeys[1].RefTable = UsersTable
 }

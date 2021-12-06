@@ -16,8 +16,28 @@ type Category struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
-	Name          string `json:"name,omitempty"`
-	book_category *int
+	Name string `json:"name,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CategoryQuery when eager-loading is set.
+	Edges CategoryEdges `json:"edges"`
+}
+
+// CategoryEdges holds the relations/edges for other nodes in the graph.
+type CategoryEdges struct {
+	// Book holds the value of the book edge.
+	Book []*Book `json:"book,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// BookOrErr returns the Book value or an error if the edge
+// was not loaded in eager-loading.
+func (e CategoryEdges) BookOrErr() ([]*Book, error) {
+	if e.loadedTypes[0] {
+		return e.Book, nil
+	}
+	return nil, &NotLoadedError{edge: "book"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -29,8 +49,6 @@ func (*Category) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case category.FieldName:
 			values[i] = new(sql.NullString)
-		case category.ForeignKeys[0]: // book_category
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Category", columns[i])
 		}
@@ -58,16 +76,14 @@ func (c *Category) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.Name = value.String
 			}
-		case category.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field book_category", value)
-			} else if value.Valid {
-				c.book_category = new(int)
-				*c.book_category = int(value.Int64)
-			}
 		}
 	}
 	return nil
+}
+
+// QueryBook queries the "book" edge of the Category entity.
+func (c *Category) QueryBook() *BookQuery {
+	return (&CategoryClient{config: c.config}).QueryBook(c)
 }
 
 // Update returns a builder for updating this Category.

@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"back/repository/ent/book"
 	"back/repository/ent/category"
 	"back/repository/ent/predicate"
 	"context"
@@ -32,9 +33,45 @@ func (cu *CategoryUpdate) SetName(s string) *CategoryUpdate {
 	return cu
 }
 
+// AddBookIDs adds the "book" edge to the Book entity by IDs.
+func (cu *CategoryUpdate) AddBookIDs(ids ...int) *CategoryUpdate {
+	cu.mutation.AddBookIDs(ids...)
+	return cu
+}
+
+// AddBook adds the "book" edges to the Book entity.
+func (cu *CategoryUpdate) AddBook(b ...*Book) *CategoryUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return cu.AddBookIDs(ids...)
+}
+
 // Mutation returns the CategoryMutation object of the builder.
 func (cu *CategoryUpdate) Mutation() *CategoryMutation {
 	return cu.mutation
+}
+
+// ClearBook clears all "book" edges to the Book entity.
+func (cu *CategoryUpdate) ClearBook() *CategoryUpdate {
+	cu.mutation.ClearBook()
+	return cu
+}
+
+// RemoveBookIDs removes the "book" edge to Book entities by IDs.
+func (cu *CategoryUpdate) RemoveBookIDs(ids ...int) *CategoryUpdate {
+	cu.mutation.RemoveBookIDs(ids...)
+	return cu
+}
+
+// RemoveBook removes "book" edges to Book entities.
+func (cu *CategoryUpdate) RemoveBook(b ...*Book) *CategoryUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return cu.RemoveBookIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -116,6 +153,60 @@ func (cu *CategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: category.FieldName,
 		})
 	}
+	if cu.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedBookIDs(); len(nodes) > 0 && !cu.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{category.Label}
@@ -141,9 +232,45 @@ func (cuo *CategoryUpdateOne) SetName(s string) *CategoryUpdateOne {
 	return cuo
 }
 
+// AddBookIDs adds the "book" edge to the Book entity by IDs.
+func (cuo *CategoryUpdateOne) AddBookIDs(ids ...int) *CategoryUpdateOne {
+	cuo.mutation.AddBookIDs(ids...)
+	return cuo
+}
+
+// AddBook adds the "book" edges to the Book entity.
+func (cuo *CategoryUpdateOne) AddBook(b ...*Book) *CategoryUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return cuo.AddBookIDs(ids...)
+}
+
 // Mutation returns the CategoryMutation object of the builder.
 func (cuo *CategoryUpdateOne) Mutation() *CategoryMutation {
 	return cuo.mutation
+}
+
+// ClearBook clears all "book" edges to the Book entity.
+func (cuo *CategoryUpdateOne) ClearBook() *CategoryUpdateOne {
+	cuo.mutation.ClearBook()
+	return cuo
+}
+
+// RemoveBookIDs removes the "book" edge to Book entities by IDs.
+func (cuo *CategoryUpdateOne) RemoveBookIDs(ids ...int) *CategoryUpdateOne {
+	cuo.mutation.RemoveBookIDs(ids...)
+	return cuo
+}
+
+// RemoveBook removes "book" edges to Book entities.
+func (cuo *CategoryUpdateOne) RemoveBook(b ...*Book) *CategoryUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return cuo.RemoveBookIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -248,6 +375,60 @@ func (cuo *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err
 			Value:  value,
 			Column: category.FieldName,
 		})
+	}
+	if cuo.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedBookIDs(); len(nodes) > 0 && !cuo.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.BookTable,
+			Columns: []string{category.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: book.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Category{config: cuo.config}
 	_spec.Assign = _node.assignValues
