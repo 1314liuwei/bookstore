@@ -59,6 +59,19 @@ func (bu *BookUpdate) SetCover(s string) *BookUpdate {
 	return bu
 }
 
+// SetPrice sets the "price" field.
+func (bu *BookUpdate) SetPrice(i int) *BookUpdate {
+	bu.mutation.ResetPrice()
+	bu.mutation.SetPrice(i)
+	return bu
+}
+
+// AddPrice adds i to the "price" field.
+func (bu *BookUpdate) AddPrice(i int) *BookUpdate {
+	bu.mutation.AddPrice(i)
+	return bu
+}
+
 // SetCategoryID sets the "category" edge to the Category entity by ID.
 func (bu *BookUpdate) SetCategoryID(id int) *BookUpdate {
 	bu.mutation.SetCategoryID(id)
@@ -268,6 +281,20 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: book.FieldCover,
 		})
 	}
+	if value, ok := bu.mutation.Price(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: book.FieldPrice,
+		})
+	}
+	if value, ok := bu.mutation.AddedPrice(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: book.FieldPrice,
+		})
+	}
 	if bu.mutation.CategoryCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -457,6 +484,19 @@ func (buo *BookUpdateOne) SetEbook(s string) *BookUpdateOne {
 // SetCover sets the "cover" field.
 func (buo *BookUpdateOne) SetCover(s string) *BookUpdateOne {
 	buo.mutation.SetCover(s)
+	return buo
+}
+
+// SetPrice sets the "price" field.
+func (buo *BookUpdateOne) SetPrice(i int) *BookUpdateOne {
+	buo.mutation.ResetPrice()
+	buo.mutation.SetPrice(i)
+	return buo
+}
+
+// AddPrice adds i to the "price" field.
+func (buo *BookUpdateOne) AddPrice(i int) *BookUpdateOne {
+	buo.mutation.AddPrice(i)
 	return buo
 }
 
@@ -691,6 +731,20 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: book.FieldCover,
+		})
+	}
+	if value, ok := buo.mutation.Price(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: book.FieldPrice,
+		})
+	}
+	if value, ok := buo.mutation.AddedPrice(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: book.FieldPrice,
 		})
 	}
 	if buo.mutation.CategoryCleared() {

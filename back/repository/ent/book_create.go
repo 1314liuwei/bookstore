@@ -53,6 +53,12 @@ func (bc *BookCreate) SetCover(s string) *BookCreate {
 	return bc
 }
 
+// SetPrice sets the "price" field.
+func (bc *BookCreate) SetPrice(i int) *BookCreate {
+	bc.mutation.SetPrice(i)
+	return bc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (bc *BookCreate) SetCreatedAt(t time.Time) *BookCreate {
 	bc.mutation.SetCreatedAt(t)
@@ -210,6 +216,9 @@ func (bc *BookCreate) check() error {
 	if _, ok := bc.mutation.Cover(); !ok {
 		return &ValidationError{Name: "cover", err: errors.New(`ent: missing required field "cover"`)}
 	}
+	if _, ok := bc.mutation.Price(); !ok {
+		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "price"`)}
+	}
 	if _, ok := bc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
@@ -279,6 +288,14 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 			Column: book.FieldCover,
 		})
 		_node.Cover = value
+	}
+	if value, ok := bc.mutation.Price(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: book.FieldPrice,
+		})
+		_node.Price = value
 	}
 	if value, ok := bc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

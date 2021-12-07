@@ -18,7 +18,7 @@ func init() {
 	bookFields := schema.Book{}.Fields()
 	_ = bookFields
 	// bookDescCreatedAt is the schema descriptor for created_at field.
-	bookDescCreatedAt := bookFields[5].Descriptor()
+	bookDescCreatedAt := bookFields[6].Descriptor()
 	// book.DefaultCreatedAt holds the default value on creation for the created_at field.
 	book.DefaultCreatedAt = bookDescCreatedAt.Default.(func() time.Time)
 	orderFields := schema.Order{}.Fields()

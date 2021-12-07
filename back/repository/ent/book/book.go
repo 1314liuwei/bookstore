@@ -21,6 +21,8 @@ const (
 	FieldEbook = "ebook"
 	// FieldCover holds the string denoting the cover field in the database.
 	FieldCover = "cover"
+	// FieldPrice holds the string denoting the price field in the database.
+	FieldPrice = "price"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeCategory holds the string denoting the category edge name in mutations.
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldEbook,
 	FieldCover,
+	FieldPrice,
 	FieldCreatedAt,
 }
 

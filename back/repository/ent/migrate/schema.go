@@ -16,6 +16,7 @@ var (
 		{Name: "description", Type: field.TypeString, Size: 2147483647},
 		{Name: "ebook", Type: field.TypeString},
 		{Name: "cover", Type: field.TypeString},
+		{Name: "price", Type: field.TypeInt},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "category_book", Type: field.TypeInt, Nullable: true},
 	}
@@ -27,7 +28,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "books_categories_book",
-				Columns:    []*schema.Column{BooksColumns[7]},
+				Columns:    []*schema.Column{BooksColumns[8]},
 				RefColumns: []*schema.Column{CategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

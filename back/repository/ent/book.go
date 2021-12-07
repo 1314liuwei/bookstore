@@ -27,6 +27,8 @@ type Book struct {
 	Ebook string `json:"ebook,omitempty"`
 	// Cover holds the value of the "cover" field.
 	Cover string `json:"cover,omitempty"`
+	// Price holds the value of the "price" field.
+	Price int `json:"price,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -85,7 +87,7 @@ func (*Book) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case book.FieldID:
+		case book.FieldID, book.FieldPrice:
 			values[i] = new(sql.NullInt64)
 		case book.FieldName, book.FieldAuthor, book.FieldDescription, book.FieldEbook, book.FieldCover:
 			values[i] = new(sql.NullString)
@@ -143,6 +145,12 @@ func (b *Book) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field cover", values[i])
 			} else if value.Valid {
 				b.Cover = value.String
+			}
+		case book.FieldPrice:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field price", values[i])
+			} else if value.Valid {
+				b.Price = int(value.Int64)
 			}
 		case book.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -210,6 +218,8 @@ func (b *Book) String() string {
 	builder.WriteString(b.Ebook)
 	builder.WriteString(", cover=")
 	builder.WriteString(b.Cover)
+	builder.WriteString(", price=")
+	builder.WriteString(fmt.Sprintf("%v", b.Price))
 	builder.WriteString(", created_at=")
 	builder.WriteString(b.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

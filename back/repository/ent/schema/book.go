@@ -20,6 +20,7 @@ func (Book) Fields() []ent.Field {
 		field.Text("description"),
 		field.String("ebook"),
 		field.String("cover"),
+		field.Int("price"),
 		field.Time("created_at").Default(time.Now).Immutable(),
 	}
 }
