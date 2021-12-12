@@ -1,6 +1,7 @@
 package model
 
 import (
+	"back/repository"
 	"back/repository/ent"
 	"back/repository/ent/book"
 	"context"
@@ -19,10 +20,11 @@ type Book struct {
 	Category     string    `json:"category"`
 }
 
-func CreateBook(ctx context.Context, client *ent.Client,
+func CreateBook(ctx context.Context,
 	name, author, describe, ebook, cover string,
 	price, surplusCatch int,
 	c *ent.Category) (Book, error) {
+	client := repository.GetDBClient()
 	b, err := client.Book.Create().
 		SetName(name).
 		SetAuthor(author).
@@ -64,10 +66,12 @@ func QueryBook(ctx context.Context, client *ent.Client, id int) ([]Book, error) 
 	return result, nil
 }
 
-func UpdateBook(ctx context.Context, client *ent.Client, id int,
+func UpdateBook(ctx context.Context, id int,
 	name, author, describe, ebook, cover string,
 	price, surplusCatch int,
 	c *ent.Category) error {
+	client := repository.GetDBClient()
+
 	_, err := client.Book.Update().Where(book.ID(id)).
 		SetName(name).
 		SetAuthor(author).
@@ -81,7 +85,8 @@ func UpdateBook(ctx context.Context, client *ent.Client, id int,
 	return nil
 }
 
-func DeleteBook(ctx context.Context, client *ent.Client, id int) error {
+func DeleteBook(ctx context.Context, id int) error {
+	client := repository.GetDBClient()
 	_, err := client.Book.Delete().Where(book.ID(id)).Exec(ctx)
 	if err != nil {
 		return err

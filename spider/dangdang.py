@@ -45,12 +45,37 @@ def main():
             time.sleep(5)
 
 
+def get_category(url):
+    html = get_dd_content(url).text
+    html = etree.HTML(html)
+    category = html.xpath('//div[@class="breadcrumb"]/a[2]/text()')[0]
+    return category
+
+
 def remove_duplicate(file):
     frame = pd.read_csv(file)
     data = frame.drop_duplicates(keep='first', inplace=False)
     data.to_csv(file, encoding='utf8')
 
 
+def update_csv():
+    f = open("data.csv", "r", encoding="utf-8")
+    f1 = open("data1.csv", "w", encoding="utf-8")
+    reader = csv.reader(f)
+    writer = csv.writer(f1)
+
+    for i in reader:
+        i.append(get_category(i[1]))
+        writer.writerow(i)
+        print(i)
+        f1.flush()
+        time.sleep(5)
+
+    f1.close()
+    f.close()
+
+
 if __name__ == '__main__':
     # main()
-    remove_duplicate("data.csv")
+    # remove_duplicate("data.csv")
+    update_csv()

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"back/repository/ent"
+	"back/repository"
 	"back/repository/ent/user"
 	"context"
 	"github.com/spf13/cast"
@@ -13,7 +13,9 @@ type User struct {
 	Type string `json:"type"`
 }
 
-func CreateUser(ctx context.Context, client *ent.Client, name string, password string, itype string) (User, error) {
+func CreateUser(ctx context.Context, name string, password string, itype string) (User, error) {
+	client := repository.GetDBClient()
+
 	u, err := client.User.Create().SetUsername(name).SetPassword(password).SetType(user.Type(itype)).Save(ctx)
 	if err != nil {
 		return User{}, err
@@ -24,7 +26,8 @@ func CreateUser(ctx context.Context, client *ent.Client, name string, password s
 		Type: cast.ToString(u.Type)}, nil
 }
 
-func QueryUser(ctx context.Context, client *ent.Client, name string, password string) (User, error) {
+func QueryUser(ctx context.Context, name string, password string) (User, error) {
+	client := repository.GetDBClient()
 	u, err := client.User.Query().Where(user.Username(name), user.Password(password)).Only(ctx)
 	if err != nil {
 		return User{}, err
@@ -32,7 +35,8 @@ func QueryUser(ctx context.Context, client *ent.Client, name string, password st
 	return User{ID: u.ID, Name: u.Username, Type: cast.ToString(u.Type)}, nil
 }
 
-func UpdateUser(ctx context.Context, client *ent.Client, ID int, name string, password string) (User, error) {
+func UpdateUser(ctx context.Context, ID int, name string, password string) (User, error) {
+	client := repository.GetDBClient()
 	u, err := client.User.UpdateOneID(ID).SetUsername(name).SetPassword(password).Save(ctx)
 	if err != nil {
 		return User{}, err
@@ -40,7 +44,8 @@ func UpdateUser(ctx context.Context, client *ent.Client, ID int, name string, pa
 	return User{ID: u.ID, Name: u.Username, Type: cast.ToString(u.Type)}, nil
 }
 
-func DeleteUser(ctx context.Context, client *ent.Client, ID int) error {
+func DeleteUser(ctx context.Context, ID int) error {
+	client := repository.GetDBClient()
 	_, err := client.User.Delete().Where(user.ID(ID)).Exec(ctx)
 	if err != nil {
 		return err
