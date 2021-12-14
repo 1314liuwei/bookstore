@@ -11,8 +11,7 @@ def get_content(u):
     headers = {
         "cookie": "proxiesNotWorking=; domainsNotWorking=4lib.org%2C2lib.org",
         "referer": "https://zh.b-ok.cc/",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.43",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0",
     }
     content = requests.get(u, proxies=proxies, headers=headers)
     return content
