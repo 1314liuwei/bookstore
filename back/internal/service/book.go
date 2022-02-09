@@ -67,3 +67,19 @@ func (b sBook) QueryByIds(ctx context.Context, ids []int64) (error, []*entity.Bo
 	}
 	return nil, result
 }
+
+func (b sBook) QueryByCategory(ctx context.Context, categoryId int64) (error, gdb.Result) {
+	err, category := Category().IsCategoryExistById(ctx, categoryId)
+	if err != nil {
+		return gerror.Newf("Category with id '%d' does not exist", categoryId), nil
+	}
+
+	all, err := dao.Books.Ctx(ctx).Fields(model.BookQueryInfo{}).Where(do.Books{
+		CategoryBook: category.Id,
+	}).All()
+	if err != nil {
+		return err, nil
+	}
+
+	return nil, all
+}

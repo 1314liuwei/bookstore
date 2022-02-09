@@ -6,6 +6,7 @@ import (
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
+	"fmt"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
 )
@@ -22,7 +23,7 @@ func Order() *sOrder {
 	return &insOrder
 }
 
-func (o sOrder) Created(ctx context.Context, in model.OrderCreate) error {
+func (o sOrder) Created(ctx context.Context, in model.Order) error {
 	if in.Amount <= 0 {
 		return gerror.New("Wrong amount")
 	}
@@ -48,6 +49,37 @@ func (o sOrder) Created(ctx context.Context, in model.OrderCreate) error {
 		}
 		return nil
 	})
+}
+
+func (o sOrder) Remove(ctx context.Context, in model.Order) error {
+	result, err := dao.Orders.Ctx(ctx).Where(do.Orders{Id: in.BookId}).Delete()
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil || affected == 0 {
+		return gerror.Newf(`Remove order with id: '%d' failed.`, in.Id)
+	}
+	return err
+}
+
+func (o sOrder) UpdateStatus(ctx context.Context, in model.Order) error {
+	fmt.Println(in)
+	result, err := dao.Orders.Ctx(ctx).Where(do.Orders{
+		Id: in.Id,
+	}).Update(do.Orders{
+		Status: in.Status,
+	})
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil || affected == 0 {
+		return gerror.Newf(`Update order with id: '%d' failed.`, in.Id)
+	}
+	return err
 }
 
 func (o sOrder) IsUserExist(ctx context.Context, id int64) (bool, error) {

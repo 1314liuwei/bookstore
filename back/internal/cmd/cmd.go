@@ -25,6 +25,7 @@ var (
 				group.Bind(
 					controller.User,
 					controller.Order,
+					controller.Book,
 				)
 			})
 			s.Run()
