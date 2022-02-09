@@ -24,6 +24,7 @@ var (
 				)
 				group.Bind(
 					controller.User,
+					controller.Order,
 				)
 			})
 			s.Run()
