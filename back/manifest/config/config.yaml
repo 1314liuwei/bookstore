@@ -1,0 +1,27 @@
+# Cli.
+gfcli:
+    gen:
+        dao:
+            -   link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
+                removePrefix: "gf_"
+                descriptionTag: true
+                noModelComment: true
+
+# Database.
+database:
+    logger:
+        level: "all"
+        stdout: true
+
+    default:
+        link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
+        debug: true
+
+server:
+    address:             ":8080"
+#    serverRoot:          "resource/public"
+    dumpRouterMap:       true
+    routeOverWrite:      true
+    accessLogEnabled:    true
+#    openapiPath:         "/api.json"
+#    swaggerPath:         "/swagger"
