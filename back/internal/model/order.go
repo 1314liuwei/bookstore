@@ -1,8 +1,8 @@
 package model
 
 type Order struct {
-	Id     int64
-	Amount float64
-	Status string
-	BookId int64
+	OId     int64
+	Amount  float64
+	Status  string
+	BookIds []int64
 }

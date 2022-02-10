@@ -6,6 +6,12 @@ gfcli:
                 removePrefix: "gf_"
                 descriptionTag: true
                 noModelComment: true
+                tables:
+                    - books
+                    - categories
+                    - orders
+                    - shopping_carts
+                    - users
 
 # Database.
 database:
@@ -19,9 +25,6 @@ database:
 
 server:
     address:             ":8080"
-#    serverRoot:          "resource/public"
     dumpRouterMap:       true
     routeOverWrite:      true
     accessLogEnabled:    true
-#    openapiPath:         "/api.json"
-#    swaggerPath:         "/swagger"

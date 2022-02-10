@@ -5,11 +5,13 @@ import (
 )
 
 type OrderCreateReq struct {
-	g.Meta `path:"/order/create" method:"POST" tags:"Order" summary:"Create an order"`
-	Amount float64 `v:"required"`
-	BookId int64   `v:"required"`
+	g.Meta  `path:"/order/create" method:"POST" tags:"Order" summary:"Create an order"`
+	Amount  float64 `v:"required"`
+	BookIds []int64 `v:"required"`
 }
-type OrderCreateRes struct{}
+type OrderCreateRes struct {
+	OId int64
+}
 
 type OrderRemoveReq struct {
 	g.Meta `path:"/order/remove" method:"POST" tags:"Order" summary:"Remove an order"`
