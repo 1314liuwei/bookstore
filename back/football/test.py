@@ -10,6 +10,7 @@ def top():
 
 def score(teams):
     result = dict(zip(teams.keys(), ([0 for _ in range(8)] for _ in range(len(teams)))))
+    print(result)
     with open("score1", "r") as f:
         data = f.readlines()
         for i in data:
