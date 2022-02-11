@@ -188,13 +188,49 @@ do
 done
 
 arr=(${!tT[@]})
-
-i=1
+result=(${!tT[@]})
+echo "Result"
+echo "${result[@]}"
+i=0
 while(( $i<= ${#arr[@]} ))
 do
-    j=$((${#arr[@]} - 1))
-    while(( $j > $i ))
-    do
+    tmp1=${arr[i]}
+    j=$(($i + 1))
+    let "i++"
 
+
+    while(( $j < ${#arr[@]} ))
+    do
+        max=$tmp1
+        tmp2=${arr[j]}
+        let "j++"
+
+        arr1=(${teams[$tmp1]})
+        arr2=(${teams[$tmp2]})
+        echo "${arr1[4]} ${arr2[4]}"
+        if [ ${arr1[4]} -gt ${arr2[4]} ]
+        then
+            max=$tmp1
+        elif [ ${arr1[4]} -lt ${arr2[4]} ]
+        then
+            max=$tmp2
+            echo $max
+        else
+            if [ ${arr1[5]} -gt ${arr2[5]} ]
+            then
+                max=$tmp1
+            elif [ ${arr1[5]} -lt ${arr2[5]} ]
+            then
+                max=$tmp2
+            fi
+        fi
     done
+
+    result[$i]=$max
+done
+
+echo "Result"
+for i in ${!result[@]}
+do
+    echo $i ${result[$i]}
 done
