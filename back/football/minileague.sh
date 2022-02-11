@@ -177,60 +177,57 @@ do
         done < $i
 done
 
-for i in ${!teams[@]}
-do
-    echo $i ${teams[$i]}
-done
-
-for i in ${!tT[@]}
-do
-    echo $i ${tT[$i]}
-done
-
 arr=(${!tT[@]})
 result=(${!tT[@]})
-echo "Result"
-echo "${result[@]}"
+
 i=0
-while(( $i<= ${#arr[@]} ))
+while(( $i < ${#arr[@]} ))
 do
-    tmp1=${arr[i]}
+    max=$i
     j=$(($i + 1))
-    let "i++"
-
-
+    
     while(( $j < ${#arr[@]} ))
     do
-        max=$tmp1
-        tmp2=${arr[j]}
-        let "j++"
+        tmp1=${result[$max]}
+        tmp2=${result[j]}
 
         arr1=(${teams[$tmp1]})
         arr2=(${teams[$tmp2]})
-        echo "${arr1[4]} ${arr2[4]}"
+
         if [ ${arr1[4]} -gt ${arr2[4]} ]
         then
-            max=$tmp1
+            max=$max
         elif [ ${arr1[4]} -lt ${arr2[4]} ]
         then
-            max=$tmp2
-            echo $max
+            max=$j
         else
             if [ ${arr1[5]} -gt ${arr2[5]} ]
             then
-                max=$tmp1
+                max=$max
             elif [ ${arr1[5]} -lt ${arr2[5]} ]
             then
-                max=$tmp2
+                max=$j
             fi
         fi
+
+        let "j++"
     done
 
-    result[$i]=$max
+    tmp1=${result[$i]}
+    tmp2=${result[$max]}
+    result[$max]=$tmp1
+    result[$i]=$tmp2
+
+    let "i++"
 done
 
-echo "Result"
+
+echo "Mini-league with ${#result[*]} teams"
+echo -e "Rank\tTeam\tG\tW\tD\tL\tPoint\tGF\tGA\tGD"
 for i in ${!result[@]}
 do
-    echo $i ${result[$i]}
+    arr=(${teams[${result[$i]}]})
+    echo -e "$(($i + 1))\t${tT[${result[$i]}]}\t${arr[0]}\t${arr[1]}\t${arr[2]}\t${arr[3]}\t${arr[4]}\t${arr[5]}\t${arr[6]}\t${arr[7]}"
 done
+
+
