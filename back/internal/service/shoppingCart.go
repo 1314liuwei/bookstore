@@ -38,8 +38,80 @@ func (s sShoppingCart) CreateShoppingCart(ctx context.Context) (int64, error) {
 	})
 }
 
-func (s *sShoppingCart) AddBook(ctx context.Context, in model.ShoppingCartAddBook) {
+func (s *sShoppingCart) AddBook(ctx context.Context, in model.ShoppingCartChangeBook) error {
+	userId := Context().Get(ctx).User.Id
+	if ok, err := s.IsUserExist(ctx, userId); !ok || err != nil {
+		return gerror.New("User does not exist")
+	}
 
+	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+		for _, id := range in.BookIds {
+			insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
+				Sid:              in.ShoppingCartId,
+				BookShoppingCart: id,
+				UserShoppingCart: userId,
+			}).Insert()
+			if err != nil {
+				return err
+			}
+
+			affected, err := insert.RowsAffected()
+			if err != nil || affected == 0 {
+				return gerror.New("Insert failed")
+			}
+		}
+		return nil
+	})
+}
+
+func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartChangeBook) error {
+	userId := Context().Get(ctx).User.Id
+	if ok, err := s.IsUserExist(ctx, userId); !ok || err != nil {
+		return gerror.New("User does not exist")
+	}
+
+	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+		for _, id := range in.BookIds {
+			insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
+				Sid:              in.ShoppingCartId,
+				BookShoppingCart: id,
+				UserShoppingCart: userId,
+			}).Delete()
+			if err != nil {
+				return err
+			}
+
+			affected, err := insert.RowsAffected()
+			if err != nil || affected == 0 {
+				return gerror.New("Delete failed")
+			}
+		}
+		return nil
+	})
+}
+
+func (s *sShoppingCart) RemoveShoppingCart(ctx context.Context, in model.ShoppingCartChangeBook) error {
+	userId := Context().Get(ctx).User.Id
+	if ok, err := s.IsUserExist(ctx, userId); !ok || err != nil {
+		return gerror.New("User does not exist")
+	}
+
+	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+		insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
+			Sid:              in.ShoppingCartId,
+			UserShoppingCart: userId,
+		}).Delete()
+		if err != nil {
+			return err
+		}
+
+		affected, err := insert.RowsAffected()
+		if err != nil || affected == 0 {
+			return gerror.New("Delete failed")
+		}
+
+		return nil
+	})
 }
 
 func (s sShoppingCart) IsUserExist(ctx context.Context, id int64) (bool, error) {

@@ -26,6 +26,7 @@ var (
 					controller.User,
 					controller.Order,
 					controller.Book,
+					controller.ShoppingCart,
 				)
 			})
 			s.Run()

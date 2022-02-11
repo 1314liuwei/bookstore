@@ -1,7 +1,7 @@
 package model
 
-type ShoppingCartAddBook struct {
+type ShoppingCartChangeBook struct {
 	ShoppingCartId int64
-	BookId         int64
+	BookIds        []int64
 	Price          int64
 }
