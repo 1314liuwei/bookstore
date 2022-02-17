@@ -1,0 +1,172 @@
+{
+  "data": [
+    {
+      "name": "mizuka Imaizumi 2 - unmanned hotel -",
+      "address": "\u5929\u795e, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/burukujin-quan.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=1&hapos=1&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=350861603_275849849_2_0_0&highlighted_blocks=350861603_275849849_2_0_0&matching_block_id=350861603_275849849_2_0_0&sr_pri_blocks=350861603_275849849_2_0_0__624910&from=searchresults#hotelTmpl",
+      "price": 54.0
+    },
+    {
+      "name": "mizuka Daimyo 3 - unmanned hotel-",
+      "address": "\u5929\u795e, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/mizuka-daimyo-3.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=2&hapos=2&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=437569603_266113676_2_0_0&highlighted_blocks=437569603_266113676_2_0_0&matching_block_id=437569603_266113676_2_0_0&sr_pri_blocks=437569603_266113676_2_0_0__701328&from=searchresults#hotelTmpl",
+      "price": 61.0
+    },
+    {
+      "name": "ZONK Hakata",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/dong-bang.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=3&hapos=3&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=745171703_341714242_2_0_0&highlighted_blocks=745171703_341714242_2_0_0&matching_block_id=745171703_341714242_2_0_0&sr_pri_blocks=745171703_341714242_2_0_0__382850&from=searchresults#hotelTmpl",
+      "price": 33.0
+    },
+    {
+      "name": "HOTEL UNIZO Hakataeki Hakataguchi\uff08\u535a\u591a\u7ad9\u535a\u591a\u53e3\u5c24\u5c3c\u4f50\u9152\u5e97 \uff09",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/unizo-hakataeki-south.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=4&hapos=4&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=323007103_342139393_0_0_0&highlighted_blocks=323007103_342139393_0_0_0&matching_block_id=323007103_342139393_0_0_0&sr_pri_blocks=323007103_342139393_0_0_0__584820&from=searchresults#hotelTmpl",
+      "price": 51.0
+    },
+    {
+      "name": "Fukuoka Toei Hotel\uff08\u798f\u5188\u4e1c\u6620\u9152\u5e97\uff09",
+      "address": "\u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/fukuoka-toel.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=5&hapos=5&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=37153901_190258851_0_42_0&highlighted_blocks=37153901_190258851_0_42_0&matching_block_id=37153901_190258851_0_42_0&sr_pri_blocks=37153901_190258851_0_42_0__478800&from=searchresults#hotelTmpl",
+      "price": 41.0
+    },
+    {
+      "name": "THE LIVELY HAKATA FUKUOKA",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/the-lively-hakata-fukuoka.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=6&hapos=6&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=462893201_274302092_2_2_0&highlighted_blocks=462893201_274302092_2_2_0&matching_block_id=462893201_274302092_2_2_0&sr_pri_blocks=462893201_274302092_2_2_0__615600&from=searchresults#hotelTmpl",
+      "price": 53.0
+    },
+    {
+      "name": "TOHO HOTEL ZONK Nakasu Deaibashi",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/mizuka-plus-nakasu.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=7&hapos=7&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=484484301_339306221_2_0_0&highlighted_blocks=484484301_339306221_2_0_0&matching_block_id=484484301_339306221_2_0_0&sr_pri_blocks=484484301_339306221_2_0_0__548958&from=searchresults#hotelTmpl",
+      "price": 48.0
+    },
+    {
+      "name": "Hotel WBF Grande Hakata\uff08WBF\u535a\u591a\u5927\u9152\u5e97\uff09",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/hotel-wbf-hakata-eki-minami.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=8&hapos=8&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=294569901_147649728_0_0_0&highlighted_blocks=294569901_147649728_0_0_0&matching_block_id=294569901_147649728_0_0_0&sr_pri_blocks=294569901_147649728_0_0_0__546000&from=searchresults#hotelTmpl",
+      "price": 47.0
+    },
+    {
+      "name": "Shizutetsu Hotel Prezio Hakataekimae\uff08\u9759\u9244\u535a\u591a\u7ad9\u524d\u9152\u5e97\uff09",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/shizutetsu-hotel-prezio-hakataekimae.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=9&hapos=9&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=315731301_278499060_0_1_0&highlighted_blocks=315731301_278499060_0_1_0&matching_block_id=315731301_278499060_0_1_0&sr_pri_blocks=315731301_278499060_0_1_0__684000&from=searchresults#hotelTmpl",
+      "price": 59.0
+    },
+    {
+      "name": "Hotel WBF Fukuoka Tenjin Minami\uff08WBF\u798f\u5188\u5929\u795e\u5357\u9152\u5e97\uff09",
+      "address": "\u5929\u795e, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/wbf-fukuoka-tenjin-minami.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=10&hapos=10&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=209498002_344881572_0_0_0&highlighted_blocks=209498002_344881572_0_0_0&matching_block_id=209498002_344881572_0_0_0&sr_pri_blocks=209498002_344881572_0_0_0__505875&from=searchresults#hotelTmpl",
+      "price": 44.0
+    },
+    {
+      "name": "ZONK Nakasu",
+      "address": "\u4e2d\u6d32, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/toho-nakasu-i.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=11&hapos=11&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=541440401_341714280_2_0_0&highlighted_blocks=541440401_341714280_2_0_0&matching_block_id=541440401_341714280_2_0_0&sr_pri_blocks=541440401_341714280_2_0_0__395200&from=searchresults#hotelTmpl",
+      "price": 34.0
+    },
+    {
+      "name": "KOKO HOTEL Fukuoka Tenjin",
+      "address": "\u5929\u795e, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/koko-fu-gang-tian-shen.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=12&hapos=12&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=673185615_277479023_2_0_0&highlighted_blocks=673185615_277479023_2_0_0&matching_block_id=673185615_277479023_2_0_0&sr_pri_blocks=673185615_277479023_2_0_0__475000&from=searchresults#hotelTmpl",
+      "price": 41.0
+    },
+    {
+      "name": "montan HAKATA",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 2.0,
+      "link": "https://www.booking.com/hotel/jp/montanbo-duo-hosuteru.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=13&hapos=13&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=244022101_285289984_2_0_0&highlighted_blocks=244022101_285289984_2_0_0&matching_block_id=244022101_285289984_2_0_0&sr_pri_blocks=244022101_285289984_2_0_0__836000&from=searchresults#hotelTmpl",
+      "price": 72.0
+    },
+    {
+      "name": "Mitsui Garden Hotel Fukuoka Nakasu",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/mitsui-garden-hotel-fukuoka-nakasu.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=14&hapos=14&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=568791303_335400219_0_2_0&highlighted_blocks=568791303_335400219_0_2_0&matching_block_id=568791303_335400219_0_2_0&sr_pri_blocks=568791303_335400219_0_2_0__760000&from=searchresults#hotelTmpl",
+      "price": 66.0
+    },
+    {
+      "name": "Hilton Fukuoka Sea Hawk\uff08\u798f\u5188\u6d77\u9e70\u5e0c\u5c14\u987f\u9152\u5e97\uff09",
+      "address": "\u798f\u5188",
+      "star": 5.0,
+      "link": "https://www.booking.com/hotel/jp/hilton-fukuoka-sea-hawk.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=15&hapos=15&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=24981802_298459143_2_2_0&highlighted_blocks=24981802_298459143_2_2_0&matching_block_id=24981802_298459143_2_2_0&sr_pri_blocks=24981802_298459143_2_2_0__2281500&from=searchresults#hotelTmpl",
+      "price": 198.0
+    },
+    {
+      "name": "LAMP LIGHT BOOKS HOTEL fukuoka",
+      "address": "\u5929\u795e, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/lamp-light-books-fukuoka.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=16&hapos=16&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=773276301_335284281_2_0_0&highlighted_blocks=773276301_335284281_2_0_0&matching_block_id=773276301_335284281_2_0_0&sr_pri_blocks=773276301_335284281_2_0_0__626000&from=searchresults#hotelTmpl",
+      "price": 54.0
+    },
+    {
+      "name": "Tenjin Minami San Ban Kan",
+      "address": "\u4e2d\u6d32, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/chun-ji.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=17&hapos=17&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=368886301_235668356_2_0_0&highlighted_blocks=368886301_235668356_2_0_0&matching_block_id=368886301_235668356_2_0_0&sr_pri_blocks=368886301_235668356_2_0_0__490960&from=searchresults#hotelTmpl",
+      "price": 43.0
+    },
+    {
+      "name": "lyf Tenjin Fukuoka",
+      "address": "\u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/lyf-tenjin-fukuoka.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=18&hapos=18&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=707270201_330605460_2_2_0&highlighted_blocks=707270201_330605460_2_2_0&matching_block_id=707270201_330605460_2_2_0&sr_pri_blocks=707270201_330605460_2_2_0__484000&from=searchresults#hotelTmpl",
+      "price": 42.0
+    },
+    {
+      "name": "Mitsui Garden Hotel Fukuoka Gion",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/mitsui-garden-fukuoka-gion.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=19&hapos=19&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=428647301_335347374_0_2_0&highlighted_blocks=428647301_335347374_0_2_0&matching_block_id=428647301_335347374_0_2_0&sr_pri_blocks=428647301_335347374_0_2_0__893000&from=searchresults#hotelTmpl",
+      "price": 77.0
+    },
+    {
+      "name": "JR Kyushu Hotel Blossom Hakata Central\uff08JR\u4e5d\u5dde\u82b1\u535a\u4e2d\u5fc3\u9152\u5e97\uff09",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/jr-kyushu-blossom-hakata-central.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=20&hapos=20&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=47245901_173548402_0_2_0&highlighted_blocks=47245901_173548402_0_2_0&matching_block_id=47245901_173548402_0_2_0&sr_pri_blocks=47245901_173548402_0_2_0__807500&from=searchresults#hotelTmpl",
+      "price": 70.0
+    },
+    {
+      "name": "HOTEL FORZA HAKATAEKI CHIKUSHI-GUCHI \u2160",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/forza-hakataeki-chikushiguchi-i.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=21&hapos=21&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=553276401_265467175_2_0_0&highlighted_blocks=553276401_265467175_2_0_0&matching_block_id=553276401_265467175_2_0_0&sr_pri_blocks=553276401_265467175_2_0_0__605625&from=searchresults#hotelTmpl",
+      "price": 52.0
+    },
+    {
+      "name": "Nest Hotel Hakata Station\uff08\u535a\u591a\u7ad9\u5185\u65af\u7279\u9152\u5e97\uff09",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/nest-hotel-hakata-ekimae.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=22&hapos=22&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=269108507_331486380_0_2_0&highlighted_blocks=269108507_331486380_0_2_0&matching_block_id=269108507_331486380_0_2_0&sr_pri_blocks=269108507_331486380_0_2_0__396000&from=searchresults#hotelTmpl",
+      "price": 34.0
+    },
+    {
+      "name": "Hotel Livemax Hakataekimae",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 3.0,
+      "link": "https://www.booking.com/hotel/jp/hoteruribumatukusubo-duo-yi-qian.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=23&hapos=23&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=685226904_344211832_0_0_0&highlighted_blocks=685226904_344211832_0_0_0&matching_block_id=685226904_344211832_0_0_0&sr_pri_blocks=685226904_344211832_0_0_0__867500&from=searchresults#hotelTmpl",
+      "price": 75.0
+    },
+    {
+      "name": "Toyoko Inn Hakata Ekimae Gion",
+      "address": "\u535a\u591a, \u798f\u5188",
+      "star": 4.0,
+      "link": "https://www.booking.com/hotel/jp/toyoko-inn-hakata-ekimae-gion.zh-cn.html?label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ&sid=3320376ce094ca7be6c358e54a909d68&aid=304142&ucfs=1&arphpl=1&checkin=2022-03-10&checkout=2022-03-11&dest_id=900047908&dest_type=city&group_adults=2&req_adults=2&no_rooms=1&group_children=0&req_children=0&hpos=24&hapos=24&sr_order=popularity&srpvid=b99649b85bf20146&srepoch=1645093746&all_sr_blocks=781563506_337597928_0_1_0&highlighted_blocks=781563506_337597928_0_1_0&matching_block_id=781563506_337597928_0_1_0&sr_pri_blocks=781563506_337597928_0_1_0__798000&from=searchresults#hotelTmpl",
+      "price": 69.0
+    }
+  ]
+}

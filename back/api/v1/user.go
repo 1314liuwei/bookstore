@@ -15,15 +15,15 @@ type UserProfileRes struct {
 type UserSignUpReq struct {
 	g.Meta    `path:"/user/sign_up" method:"POST" tags:"User" summary:"Sign up a new user account"`
 	Username  string `v:"required"`
-	Password  string `v:"required|length:6,16"`
-	Password2 string `v:"required|length:6,16|same:Password"`
+	Password  string `v:"required|password"`
+	Password2 string `v:"required|password|same:Password"`
 }
 type UserSignUpRes struct{}
 
 type UserSignInReq struct {
 	g.Meta   `path:"/user/sign_in" method:"POST" tags:"User" summary:"Sign in with exists account"`
 	Username string `v:"required"`
-	Password string `v:"required"`
+	Password string `v:"required|password"`
 }
 type UserSignInRes struct{}
 

@@ -1,10 +1,13 @@
+import json
+import time
+
 import requests
 from lxml import etree
 
 
 def download_content(page):
     url = f"https://www.booking.com/searchresults.zh-cn.html?aid=304142;label=wec301zr-1FCAEoggI46AdIM1gEaIkCiAEBmAEruAEGyAEM2AEB6AEB-AELiAIBqAIDuAK-9rGQBsACAdICJDU4Zjc1MDZkLWU1OGEtNGFmMS04Mzc0LWVjOTBmNTIzOWNkYdgCBuACAQ;sid=3320376ce094ca7be6c358e54a909d68;tmpl=searchresults;checkin_month=3;checkin_monthday=10;checkin_year=2022;checkout_month=3;checkout_monthday=11;checkout_year=2022;city=900047908;class_interval=1;dest_id=900047908;dest_type=city;dtdisc=0;from_sf=1;group_adults=2;" \
-          f"group_children=0;inac=0;index_postcard=0;label_click=undef;no_rooms=1;offset={page*25};" \
+          f"group_children=0;inac=0;index_postcard=0;label_click=undef;no_rooms=1;offset={page * 25};" \
           f"order=popularity;postcard=0;room1=A%2CA;sb_price_type=total;shw_aparth=1;" \
           f"slp_r_match=0;src_elem=sb;srpvid=427b602e9d3a00e2;ss=%25E7%25A6%258F%25E5%2586%2588;" \
           f"ss_all=0;ssb=empty;sshis=0;ssne=%25E7%25A6%258F%25E5%2586%2588;ssne_untouched=%25E7%25A6%258F%25E5%2586%2588&;" \
@@ -71,7 +74,7 @@ def download_content(page):
         f.write(r.text)
 
 
-def get_data():
+def get_data(r):
     with open("result.html", "r", encoding="utf-8") as f:
         data = f.read()
 
@@ -80,11 +83,28 @@ def get_data():
     addresses = html.xpath("//span[@data-testid='address']/text()")
     stars = html.xpath("//div[@data-testid='rating-stars']")
     links = html.xpath("//a[@data-testid='title-link']/@href")
-
-    for i, j in enumerate(zip(names, addresses, stars, links)):
-        print(i, j[0], j[1], j[2].xpath("count(.//span)"), j[3])
+    prices = html.xpath("//div[@data-testid='price-and-discounted-price']/span[last()]/text()")
+    for i, j in enumerate(zip(names, addresses, stars, links, prices)):
+        tmp = {
+            "name": j[0],
+            "address": j[1],
+            "star": j[2].xpath("count(.//span)"),
+            "link": j[3],
+            "price": float(j[4][3:].replace(",", "")),
+        }
+        r.append(tmp)
 
 
 if __name__ == '__main__':
-    download_content(1)
-    get_data()
+    result = []
+    for i in range(3):
+        download_content(i)
+        get_data(result)
+        time.sleep(1)
+
+    for i in sorted(result, key=lambda x: x["price"]):
+        print(i)
+    # with open("result.json", "w", encoding="utf-8") as f:
+    #     f.write(json.dumps({
+    #         "data": result
+    #     }))
