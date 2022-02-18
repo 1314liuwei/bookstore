@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="">
+    <title>Search</title>
+</head>
+<body>
+<div id="search-box">
+    <div id="logo"></div>
+    <form action="/search" method="get">
+        <div id="search-form">
+            <input type="text" id="search-input" name="key">
+            <button id="search-botton">Search</button>
+        </div>
+    </form>
+
+</div>
+<style>
+    #search-box {
+        width: 641px;
+        margin: 0 auto;
+    }
+
+    #search-form {
+        font-size: 0px;
+    }
+
+    #logo {
+        width: 270px;
+        height: 129px;
+        background-size: cover;
+        margin: 0 auto;
+    }
+
+    #search-input {
+        width: 521px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+        padding: 9px 7px;
+        border: 1px solid #b8b8b8;
+    }
+
+    #search-botton {
+        width: 104px;
+        height: 40px;
+        border: 1px solid #38f;
+        border-bottom: 1px solid #2e7ae5;
+        background-color: #38f;
+        color: #fff;
+        font-size: 18px;
+        position: relative;
+        top: 2px;
+        cursor: pointer;
+    }
+
+    #search-botton:hover {
+        background-color: #377ad8;
+    }
+</style>
+</body>
+</html>

@@ -1,8 +1,9 @@
-import json
-import time
-
 import requests
+from flask import Flask, render_template, request
 from lxml import etree
+from whoosh.fields import *
+from whoosh.index import create_in, open_dir
+from whoosh.qparser import QueryParser
 
 
 def download_content(page):
@@ -81,30 +82,57 @@ def get_data(r):
     html = etree.HTML(data)
     names = html.xpath("//div[@data-testid='title']/text()")
     addresses = html.xpath("//span[@data-testid='address']/text()")
+    images = html.xpath("//image[@data-testid='image']/@src")
     stars = html.xpath("//div[@data-testid='rating-stars']")
     links = html.xpath("//a[@data-testid='title-link']/@href")
     prices = html.xpath("//div[@data-testid='price-and-discounted-price']/span[last()]/text()")
-    for i, j in enumerate(zip(names, addresses, stars, links, prices)):
+    for name, address, star, link, price in zip(names, addresses, stars, links, prices):
         tmp = {
-            "name": j[0],
-            "address": j[1],
-            "star": j[2].xpath("count(.//span)"),
-            "link": j[3],
-            "price": float(j[4][3:].replace(",", "")),
+            "name": name,
+            "address": address,
+            "star": int(star.xpath("count(./span)")),
+            "link": link,
+            "price": float(price[3:].replace(",", "")),
+            # "image": image,
         }
         r.append(tmp)
 
 
-if __name__ == '__main__':
-    result = []
-    for i in range(3):
-        download_content(i)
-        get_data(result)
-        time.sleep(1)
+app = Flask(__name__)
 
-    for i in sorted(result, key=lambda x: x["price"]):
-        print(i)
-    # with open("result.json", "w", encoding="utf-8") as f:
-    #     f.write(json.dumps({
-    #         "data": result
-    #     }))
+
+@app.route("/")
+def search():
+    return render_template("search.html")
+
+
+@app.route('/search')
+def kw():
+    key = request.args.get('key')
+    print(key)
+
+    reader = open_dir("index", indexname="hotel")
+    with reader.searcher() as s:
+        query = QueryParser("name", reader.schema).parse(key)
+        query = s.search(query)
+        for i in query:
+            print(i)
+        return render_template("template.html", result=query)
+
+
+if __name__ == '__main__':
+    schema = Schema(name=TEXT(stored=True, ), star=NUMERIC(stored=True), link=ID(stored=True),
+                    address=TEXT(stored=True, ), price=NUMERIC(stored=True))
+
+    ix = create_in("index", schema, indexname='hotel')
+    writer = ix.writer()
+    for j in range(5):
+        result = []
+        download_content(j)
+        get_data(result)
+        for i in result:
+            print(i)
+            writer.add_document(name=i["name"], star=i["star"], link=i["link"], address=i["address"], price=i["price"])
+    writer.commit()
+
+    app.run()

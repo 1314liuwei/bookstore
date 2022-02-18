@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        .box1 {
+            width: 600px;
+            height: 450px;
+            background-color: yellow;
+            position: absolute;
+            right: 0;
+        }
+
+        .result {
+            border: 1px solid black;
+            width: 550px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+
+
+<div class="box1">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d854343.548532353!2d130.6499632!3d33.2329807!3m2!1i1024!2i768!4f13.1!2m1!1z56aP5bKh5ZiF5rqr5rOJ5Zyw5ZyW!5e0!3m2!1szh-CN!2sus!4v1645155841882!5m2!1szh-CN!2sus"
+            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</div>
+
+
+<form action="/sp" method="get">
+    <div class="key">
+        <input type="text" name="wd">
+        <input type="submit" value="search">
+    </div>
+</form>
+
+<br><br>
+{% for search in result %}
+<div class="result">
+    <a href="{{ search.link }}" target="_blank" class="title">{% autoescape off %}{{ search.name }}{%
+        endautoescape %}</a>
+    <div>stars: {{search.star}}</div>
+    <div>address: {{search.address}}</div>
+    <div>price: US${{search.price}}</div>
+</div>
+</div>
+<br>
+{% endfor %}
+
+</body>
+</html>
