@@ -2,12 +2,11 @@ package service
 
 import (
 	"back/internal/model"
-	"back/internal/model/entity"
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type (
@@ -40,43 +39,14 @@ func (b sBook) Insert(ctx context.Context, in model.BookInsert) error {
 	})
 }
 
-func (b sBook) QueryById(ctx context.Context, id int64) (error, *entity.Books) {
-	var book *entity.Books
-
-	err := dao.Books.Ctx(ctx).Where(do.Books{Id: id}).Scan(&book)
+func (b sBook) Query(ctx context.Context, in model.BookQueryInfo) (error, gdb.Result) {
+	var query do.Books
+	err := gconv.Scan(in, &query)
 	if err != nil {
 		return err, nil
 	}
 
-	if book == nil {
-		return gerror.Newf(`The book with ID '%s' cannot be queried`, id), nil
-	}
-
-	return nil, book
-}
-
-func (b sBook) QueryByIds(ctx context.Context, ids []int64) (error, []*entity.Books) {
-	var result []*entity.Books
-	for _, id := range ids {
-		err, e := b.QueryById(ctx, id)
-		if err != nil {
-			return err, result
-		}
-
-		result = append(result, e)
-	}
-	return nil, result
-}
-
-func (b sBook) QueryByCategory(ctx context.Context, categoryId int64) (error, gdb.Result) {
-	err, category := Category().IsCategoryExistById(ctx, categoryId)
-	if err != nil {
-		return gerror.Newf("Category with id '%d' does not exist", categoryId), nil
-	}
-
-	all, err := dao.Books.Ctx(ctx).Fields(model.BookQueryInfo{}).Where(do.Books{
-		CategoryBook: category.Id,
-	}).All()
+	all, err := dao.Books.Ctx(ctx).WhereOr(query).All()
 	if err != nil {
 		return err, nil
 	}

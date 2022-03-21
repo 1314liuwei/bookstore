@@ -2,7 +2,9 @@ package service
 
 import (
 	"back/internal/model"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"net/http"
 )
 
 type (
@@ -34,7 +36,15 @@ func (m sMiddleware) Ctx(r *ghttp.Request) {
 }
 
 func (m sMiddleware) Auth(r *ghttp.Request) {
-	// TODO: Auth
+	user := Session().GetUser(r.Context())
+	if user.Id == 0 || user == nil {
+		r.Response.WriteStatusExit(http.StatusForbidden, g.Map{
+			"code": http.StatusForbidden,
+			"data": "",
+			"msg":  "Invalid cookie",
+		})
+	}
+	r.Middleware.Next()
 }
 
 func (m sMiddleware) CORS(r *ghttp.Request) {

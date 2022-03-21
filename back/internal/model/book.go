@@ -10,11 +10,8 @@ type BookInsert struct {
 }
 
 type BookQueryInfo struct {
-	Name        string
-	Author      string
-	Description string
-	Cover       string
-	Ebook       string
-	Price       float32
-	Category    string
+	ID       string
+	Name     string
+	Author   string
+	Category string
 }

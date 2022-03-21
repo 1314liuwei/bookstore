@@ -7,7 +7,7 @@ import (
 
 type BookQueryReq struct {
 	g.Meta   `path:"/book/category" method:"POST" tags:"Book" summary:"Query books by category"`
-	Category int64 `v:"required"`
+	Category string
 }
 type BookQueryRes struct {
 	Books gdb.Result

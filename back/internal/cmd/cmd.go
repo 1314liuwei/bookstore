@@ -28,6 +28,12 @@ var (
 					controller.Book,
 					controller.ShoppingCart,
 				)
+
+				group.Middleware(
+					service.Middleware().Auth,
+				)
+
+				group.GET("/user/profile", controller.User.Profile)
 			})
 			s.Run()
 			return nil

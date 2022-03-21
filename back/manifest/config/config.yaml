@@ -3,15 +3,8 @@ gfcli:
     gen:
         dao:
             -   link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
-                removePrefix: "gf_"
                 descriptionTag: true
                 noModelComment: true
-                tables:
-                    - books
-                    - categories
-                    - orders
-                    - shopping_carts
-                    - users
 
 # Database.
 database:
