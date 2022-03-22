@@ -31,9 +31,7 @@ var (
 				)
 				group.Bind(
 					controller.User,
-					controller.Order,
 					controller.Book,
-					controller.ShoppingCart,
 				)
 
 				group.Middleware(
@@ -41,6 +39,10 @@ var (
 				)
 
 				group.GET("/user/profile", controller.User.Profile)
+				group.Bind(
+					controller.Order,
+					controller.ShoppingCart,
+				)
 			})
 			s.Run()
 			return nil

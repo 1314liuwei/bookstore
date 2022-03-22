@@ -7,7 +7,7 @@ import (
 
 type BookQueryByCategoryReq struct {
 	g.Meta   `path:"/book/category" method:"POST" tags:"Book" summary:"Query books by category"`
-	Category string
+	Category string `v:"required"`
 }
 type BookQueryByCategoryRes struct {
 	Books gdb.Result
@@ -15,15 +15,14 @@ type BookQueryByCategoryRes struct {
 
 type BookQueryByIDReq struct {
 	g.Meta `path:"/book/id" method:"POST" tags:"Book" summary:"Query books by category"`
-	ID     int
+	ID     int `v:"required"`
 }
 type BookQueryByIDRes struct {
 	Books gdb.Result
 }
 
 type BookQueryRandom20Req struct {
-	g.Meta   `path:"/book/20" method:"GET" tags:"Book" summary:"Query books by category"`
-	Category string
+	g.Meta `path:"/book/20" method:"GET" tags:"Book" summary:"Query books by category"`
 }
 type BookQueryRandom20Res struct {
 	Books gdb.Result

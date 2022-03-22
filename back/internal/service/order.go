@@ -24,17 +24,13 @@ func Order() *sOrder {
 }
 
 func (o sOrder) Created(ctx context.Context, in model.Order) (int64, error) {
-	if in.Amount <= 0 {
-		return 0, gerror.New("Wrong amount")
-	}
-
 	userId := Context().Get(ctx).User.Id
 	if ok, err := o.IsUserExist(ctx, userId); !ok || err != nil {
 		return 0, gerror.New("User does not exist")
 	}
 
-	for _, i := range in.BookIds {
-		if ok, err := o.IsBookExist(ctx, i); !ok || err != nil {
+	for _, i := range in.Data {
+		if ok, err := o.IsBookExist(ctx, int64(i.BookId)); !ok || err != nil {
 			return 0, gerror.New("Book does not exist")
 		}
 	}
@@ -42,12 +38,12 @@ func (o sOrder) Created(ctx context.Context, in model.Order) (int64, error) {
 	oid := time.Now().UnixMilli()
 
 	return oid, dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
-		for _, id := range in.BookIds {
+		for _, data := range in.Data {
 			_, err := dao.Orders.Ctx(ctx).Data(do.Orders{
 				Oid:       oid,
-				Amount:    in.Amount,
+				Amount:    data.Amount,
 				Status:    consts.OrderToBePaid,
-				BookOrder: id,
+				BookOrder: data.BookId,
 				UserOrder: userId,
 			}).Insert()
 			if err != nil {
@@ -58,7 +54,7 @@ func (o sOrder) Created(ctx context.Context, in model.Order) (int64, error) {
 	})
 }
 
-func (o sOrder) Remove(ctx context.Context, in model.Order) error {
+func (o sOrder) Remove(ctx context.Context, in model.OrderRemove) error {
 	result, err := dao.Orders.Ctx(ctx).Where(do.Orders{
 		Oid: in.OId,
 	}).Delete()
@@ -73,7 +69,7 @@ func (o sOrder) Remove(ctx context.Context, in model.Order) error {
 	return err
 }
 
-func (o sOrder) UpdateStatus(ctx context.Context, in model.Order) error {
+func (o sOrder) UpdateStatus(ctx context.Context, in model.OrderUpdate) error {
 	result, err := dao.Orders.Ctx(ctx).Where(do.Orders{
 		Oid: in.OId,
 	}).Update(do.Orders{
@@ -90,7 +86,7 @@ func (o sOrder) UpdateStatus(ctx context.Context, in model.Order) error {
 	return err
 }
 
-func (o sOrder) Query(ctx context.Context, in model.Order) (gdb.Result, error) {
+func (o sOrder) Query(ctx context.Context, in model.OrderQuery) (gdb.Result, error) {
 	all, err := dao.Orders.Ctx(ctx).Where(do.Orders{
 		Oid: in.OId,
 	}).All()

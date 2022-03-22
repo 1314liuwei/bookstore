@@ -37,7 +37,7 @@ func (m sMiddleware) Ctx(r *ghttp.Request) {
 
 func (m sMiddleware) Auth(r *ghttp.Request) {
 	user := Session().GetUser(r.Context())
-	if user.Id == 0 || user == nil {
+	if user == nil || user.Id == 0 {
 		r.Response.WriteStatusExit(http.StatusForbidden, g.Map{
 			"code": http.StatusForbidden,
 			"data": "",
