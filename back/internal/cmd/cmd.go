@@ -4,6 +4,8 @@ import (
 	"back/internal/controller"
 	"back/internal/service"
 	"context"
+	"os"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -16,6 +18,11 @@ var (
 		Brief: "start http server of bookstore",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+
+			s.SetIndexFolder(true)
+			pwd, _ := os.Getwd()
+			s.AddStaticPath("/ebooks", pwd+"/ebooks")
+
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(
 					service.Middleware().Ctx,

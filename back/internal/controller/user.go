@@ -1,7 +1,7 @@
 package controller
 
 import (
-	v1 "back/api/v1"
+	"back/api/v1"
 	"back/internal/model"
 	"back/internal/service"
 	"context"

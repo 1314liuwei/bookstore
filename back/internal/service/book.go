@@ -6,7 +6,6 @@ import (
 	"back/internal/service/internal/do"
 	"context"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type (
@@ -41,12 +40,39 @@ func (b sBook) Insert(ctx context.Context, in model.BookInsert) error {
 
 func (b sBook) Query(ctx context.Context, in model.BookQueryInfo) (error, gdb.Result) {
 	var query do.Books
-	err := gconv.Scan(in, &query)
+
+	if in.ID != 0 {
+		query.Id = in.ID
+	} else if in.Title != "" {
+		query.Name = in.Title
+	} else if in.Category != "" {
+		query.Category = in.Category
+	} else if in.Author != "" {
+		query.Author = in.Author
+	}
+
+	all, err := dao.Books.Ctx(ctx).WhereOr(query).All()
 	if err != nil {
 		return err, nil
 	}
 
-	all, err := dao.Books.Ctx(ctx).WhereOr(query).All()
+	return nil, all
+}
+
+func (b sBook) QueryRandom20(ctx context.Context, in model.BookQueryInfo) (error, gdb.Result) {
+	var query do.Books
+
+	if in.ID != 0 {
+		query.Id = in.ID
+	} else if in.Title != "" {
+		query.Name = in.Title
+	} else if in.Category != "" {
+		query.Category = in.Category
+	} else if in.Author != "" {
+		query.Author = in.Author
+	}
+
+	all, err := dao.Books.Ctx(ctx).OrderRandom().Limit(20).All()
 	if err != nil {
 		return err, nil
 	}

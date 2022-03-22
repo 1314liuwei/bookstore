@@ -68,7 +68,7 @@ func (o sOrder) Remove(ctx context.Context, in model.Order) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil || affected == 0 {
-		return gerror.Newf(`Remove order with id: '%d' failed.`, in.OId)
+		return gerror.Newf(`Empty order with id: '%d' failed.`, in.OId)
 	}
 	return err
 }

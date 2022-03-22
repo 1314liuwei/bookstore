@@ -24,8 +24,7 @@ func (s cShoppingCart) Create(ctx context.Context, req *v1.ShoppingCartCreateReq
 
 func (s cShoppingCart) AddBooks(ctx context.Context, req *v1.ShoppingCartAddBooksReq) (res *v1.ShoppingCartAddBooksRes, err error) {
 	err = service.ShoppingCarts().AddBook(ctx, model.ShoppingCartChangeBook{
-		ShoppingCartId: req.SId,
-		BookIds:        req.BookIds,
+		BookIds: req.BookIds,
 	})
 	if err != nil {
 		return nil, err
@@ -35,8 +34,7 @@ func (s cShoppingCart) AddBooks(ctx context.Context, req *v1.ShoppingCartAddBook
 
 func (s cShoppingCart) RemoveBooks(ctx context.Context, req *v1.ShoppingCartRemoveBooksReq) (res *v1.ShoppingCartRemoveBooksRes, err error) {
 	err = service.ShoppingCarts().RemoveBook(ctx, model.ShoppingCartChangeBook{
-		ShoppingCartId: req.SId,
-		BookIds:        req.BookIds,
+		BookIds: req.BookIds,
 	})
 	if err != nil {
 		return nil, err
@@ -44,10 +42,16 @@ func (s cShoppingCart) RemoveBooks(ctx context.Context, req *v1.ShoppingCartRemo
 	return
 }
 
-func (s cShoppingCart) Remove(ctx context.Context, req *v1.ShoppingCartRemoveReq) (res *v1.ShoppingCartRemoveRes, err error) {
-	err = service.ShoppingCarts().RemoveShoppingCart(ctx, model.ShoppingCartChangeBook{
-		ShoppingCartId: req.SId,
-	})
+func (s cShoppingCart) Empty(ctx context.Context, req *v1.ShoppingCartEmptyReq) (res *v1.ShoppingCartEmptyRes, err error) {
+	err = service.ShoppingCarts().Empty(ctx, model.ShoppingCartChangeBook{})
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (s cShoppingCart) Settle(ctx context.Context, req *v1.ShoppingCartEmptyReq) (res *v1.ShoppingCartEmptyRes, err error) {
+	err = service.ShoppingCarts().Empty(ctx, model.ShoppingCartChangeBook{})
 	if err != nil {
 		return nil, err
 	}

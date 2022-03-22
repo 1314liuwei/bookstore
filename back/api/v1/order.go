@@ -14,7 +14,7 @@ type OrderCreateRes struct {
 }
 
 type OrderRemoveReq struct {
-	g.Meta `path:"/order/remove" method:"POST" tags:"Order" summary:"Remove an order"`
+	g.Meta `path:"/order/remove" method:"POST" tags:"Order" summary:"Empty an order"`
 	Id     int64 `v:"required"`
 }
 type OrderRemoveRes struct{}

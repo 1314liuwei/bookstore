@@ -5,9 +5,10 @@ import (
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
+	"time"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"time"
 )
 
 type sShoppingCart struct{}
@@ -47,7 +48,6 @@ func (s *sShoppingCart) AddBook(ctx context.Context, in model.ShoppingCartChange
 	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		for _, id := range in.BookIds {
 			insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
-				Sid:              in.ShoppingCartId,
 				BookShoppingCart: id,
 				UserShoppingCart: userId,
 			}).Insert()
@@ -73,7 +73,6 @@ func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartCha
 	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		for _, id := range in.BookIds {
 			insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
-				Sid:              in.ShoppingCartId,
 				BookShoppingCart: id,
 				UserShoppingCart: userId,
 			}).Delete()
@@ -90,23 +89,22 @@ func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartCha
 	})
 }
 
-func (s *sShoppingCart) RemoveShoppingCart(ctx context.Context, in model.ShoppingCartChangeBook) error {
+func (s *sShoppingCart) Empty(ctx context.Context, in model.ShoppingCartChangeBook) error {
 	userId := Context().Get(ctx).User.Id
 	if ok, err := s.IsUserExist(ctx, userId); !ok || err != nil {
 		return gerror.New("User does not exist")
 	}
 
 	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
-		insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
-			Sid:              in.ShoppingCartId,
+		insert, err := dao.ShoppingCarts.Ctx(ctx).Where(do.ShoppingCarts{
 			UserShoppingCart: userId,
 		}).Delete()
 		if err != nil {
 			return err
 		}
 
-		affected, err := insert.RowsAffected()
-		if err != nil || affected == 0 {
+		_, err = insert.RowsAffected()
+		if err != nil {
 			return gerror.New("Delete failed")
 		}
 
