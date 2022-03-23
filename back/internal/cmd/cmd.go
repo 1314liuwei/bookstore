@@ -18,15 +18,17 @@ var (
 		Brief: "start http server of bookstore",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+			s.Use(service.Middleware().CORS)
 
-			s.SetIndexFolder(true)
 			pwd, _ := os.Getwd()
-			s.AddStaticPath("/ebooks", pwd+"/ebooks")
+			s.BindHandler("/test/:file", func(r *ghttp.Request) {
+				file := r.GetRouter("file")
+				r.Response.ServeFileDownload(pwd + "/ebooks/" + file.String())
+			})
 
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(
 					service.Middleware().Ctx,
-					service.Middleware().CORS,
 					ghttp.MiddlewareHandlerResponse,
 				)
 				group.Bind(

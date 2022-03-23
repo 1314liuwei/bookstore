@@ -16,7 +16,7 @@ func (o cOrder) Create(ctx context.Context, req *v1.OrderCreateReq) (res *v1.Ord
 	oid, err := service.Order().Created(ctx, model.Order{
 		Data: req.Data,
 	})
-	res = &v1.OrderCreateRes{OId: oid}
+	res = &v1.OrderCreateRes{OIds: oid}
 	return
 }
 

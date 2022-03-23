@@ -23,22 +23,35 @@ func Order() *sOrder {
 	return &insOrder
 }
 
-func (o sOrder) Created(ctx context.Context, in model.Order) (int64, error) {
+func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 	userId := Context().Get(ctx).User.Id
 	if ok, err := o.IsUserExist(ctx, userId); !ok || err != nil {
-		return 0, gerror.New("User does not exist")
+		return nil, gerror.New("User does not exist")
 	}
 
+	// 检查 book 是否有效
 	for _, i := range in.Data {
 		if ok, err := o.IsBookExist(ctx, int64(i.BookId)); !ok || err != nil {
-			return 0, gerror.New("Book does not exist")
+			return nil, gerror.New("Book does not exist")
 		}
 	}
 
-	oid := time.Now().UnixMilli()
+	// oid 为当前时间戳
+	var result []int64
+	err := dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+		var temp map[int]struct{}
 
-	return oid, dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		for _, data := range in.Data {
+			if _, ok := temp[data.BookId]; ok {
+				continue
+			} else {
+				temp[data.BookId] = struct{}{}
+			}
+
+			// 当前订单号
+			oid := time.Now().UnixMilli()
+			// 将订单号加入结果列表
+			result = append(result, oid)
 			_, err := dao.Orders.Ctx(ctx).Data(do.Orders{
 				Oid:       oid,
 				Amount:    data.Amount,
@@ -52,6 +65,11 @@ func (o sOrder) Created(ctx context.Context, in model.Order) (int64, error) {
 		}
 		return nil
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (o sOrder) Remove(ctx context.Context, in model.OrderRemove) error {

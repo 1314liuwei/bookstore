@@ -9,9 +9,8 @@ type OrderCreateReq struct {
 	g.Meta `path:"/order/create" method:"POST" tags:"Order" summary:"Create an order"`
 	Data   []model.OrderBookInfo `v:"required"`
 }
-
 type OrderCreateRes struct {
-	OId int64 `v:"required" json:"order_id"`
+	OIds []int64 `v:"required" json:"order_id"`
 }
 
 type OrderRemoveReq struct {
