@@ -11,13 +11,13 @@ type cShoppingCart struct{}
 
 var ShoppingCart = cShoppingCart{}
 
-func (s cShoppingCart) Create(ctx context.Context, req *v1.ShoppingCartCreateReq) (res *v1.ShoppingCartCreateRes, err error) {
-	id, err := service.ShoppingCarts().CreateShoppingCart(ctx)
+func (s cShoppingCart) Query(ctx context.Context, req *v1.ShoppingCartQueryReq) (res *v1.ShoppingCartQueryRes, err error) {
+	result, err := service.ShoppingCarts().Query(ctx)
 	if err != nil {
 		return nil, err
 	}
-	res = &v1.ShoppingCartCreateRes{
-		SId: id,
+	res = &v1.ShoppingCartQueryRes{
+		Result: result,
 	}
 	return
 }

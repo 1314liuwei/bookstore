@@ -5,10 +5,11 @@ import (
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
-	"time"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sShoppingCart struct{}
@@ -19,24 +20,23 @@ func ShoppingCarts() *sShoppingCart {
 	return &insShoppingCart
 }
 
-func (s sShoppingCart) CreateShoppingCart(ctx context.Context) (int64, error) {
+func (s sShoppingCart) Query(ctx context.Context) (g.MapIntInt, error) {
 	userId := Context().Get(ctx).User.Id
 	if ok, err := s.IsUserExist(ctx, userId); !ok || err != nil {
-		return 0, gerror.New("User does not exist")
+		return nil, gerror.New("User does not exist")
 	}
 
-	oid := time.Now().UnixMilli()
+	all, err := dao.ShoppingCarts.Ctx(ctx).Fields("book_shopping_cart", "user_shopping_cart").Where(do.ShoppingCarts{UserShoppingCart: userId}).All()
+	if err != nil {
+		return nil, err
+	}
 
-	return oid, dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
-		_, err := dao.Orders.Ctx(ctx).Data(do.Orders{
-			Oid:       oid,
-			UserOrder: userId,
-		}).Insert()
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	result := make(g.MapIntInt)
+	for _, record := range all {
+		result[gconv.Int(record["book_shopping_cart"])]++
+	}
+
+	return result, nil
 }
 
 func (s *sShoppingCart) AddBook(ctx context.Context, in model.ShoppingCartChangeBook) error {
@@ -72,10 +72,10 @@ func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartCha
 
 	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		for _, id := range in.BookIds {
-			insert, err := dao.ShoppingCarts.Ctx(ctx).Data(do.ShoppingCarts{
-				BookShoppingCart: id,
+			insert, err := dao.ShoppingCarts.Ctx(ctx).Where(do.ShoppingCarts{
 				UserShoppingCart: userId,
-			}).Delete()
+				BookShoppingCart: id,
+			}).Limit(1).Delete()
 			if err != nil {
 				return err
 			}
