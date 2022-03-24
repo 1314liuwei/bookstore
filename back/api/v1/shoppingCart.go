@@ -8,7 +8,7 @@ type ShoppingCartQueryReq struct {
 	g.Meta `path:"/shopping_cart/query" method:"GET" tags:"shopping_cart" summary:"Create an shopping cart"`
 }
 type ShoppingCartQueryRes struct {
-	Result g.MapIntInt `json:"result"`
+	Result []int `json:"result"`
 }
 
 type ShoppingCartAddBooksReq struct {

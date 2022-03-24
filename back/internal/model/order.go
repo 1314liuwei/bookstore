@@ -5,7 +5,6 @@ type Order struct {
 }
 type OrderBookInfo struct {
 	BookId int `json:"book"`
-	Amount int `json:"amount"`
 }
 
 type OrderRemove struct {

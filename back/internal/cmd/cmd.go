@@ -4,7 +4,6 @@ import (
 	"back/internal/controller"
 	"back/internal/service"
 	"context"
-	"os"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -20,17 +19,12 @@ var (
 			s := g.Server()
 			s.Use(service.Middleware().CORS)
 
-			pwd, _ := os.Getwd()
-			s.BindHandler("/test/:file", func(r *ghttp.Request) {
-				file := r.GetRouter("file")
-				r.Response.ServeFileDownload(pwd + "/ebooks/" + file.String())
-			})
-
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(
 					service.Middleware().Ctx,
 					ghttp.MiddlewareHandlerResponse,
 				)
+
 				group.Bind(
 					controller.User,
 					controller.Book,
@@ -44,8 +38,10 @@ var (
 				group.Bind(
 					controller.Order,
 					controller.ShoppingCart,
+					controller.EBook,
 				)
 			})
+
 			s.Run()
 			return nil
 		},

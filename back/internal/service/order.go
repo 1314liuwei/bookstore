@@ -6,9 +6,10 @@ import (
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
+	"time"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"time"
 )
 
 type (
@@ -39,7 +40,7 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 	// oid 为当前时间戳
 	var result []int64
 	err := dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
-		var temp map[int]struct{}
+		temp := make(map[int]struct{})
 
 		for _, data := range in.Data {
 			if _, ok := temp[data.BookId]; ok {
@@ -54,7 +55,6 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 			result = append(result, oid)
 			_, err := dao.Orders.Ctx(ctx).Data(do.Orders{
 				Oid:       oid,
-				Amount:    data.Amount,
 				Status:    consts.OrderToBePaid,
 				BookOrder: data.BookId,
 				UserOrder: userId,
