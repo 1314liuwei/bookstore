@@ -10,6 +10,7 @@ type BookInsert struct {
 }
 
 type BookQueryInfo struct {
+	Page     int
 	ID       int
 	Title    string
 	Author   string

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"back/internal/model"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -24,3 +25,11 @@ type OrderUpdateStatusCompletedReq struct {
 	Id     int64 `v:"required"`
 }
 type OrderUpdateStatusCompletedRes struct{}
+
+type OrderQueryAllReq struct {
+	g.Meta `path:"/order/remove" method:"POST" tags:"Order" summary:"Query all orders"`
+	Page   int `default:"1"`
+}
+type OrderQueryAllRes struct {
+	Data gdb.Result
+}

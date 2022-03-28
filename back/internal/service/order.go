@@ -115,6 +115,14 @@ func (o sOrder) Query(ctx context.Context, in model.OrderQuery) (gdb.Result, err
 	return all, nil
 }
 
+func (o sOrder) QueryAll(ctx context.Context, in model.OrderQueryAll) (gdb.Result, error) {
+	all, err := dao.Orders.Ctx(ctx).Page(in.Page, consts.Limit).All()
+	if err != nil {
+		return nil, err
+	}
+	return all, nil
+}
+
 func (o sOrder) IsUserExist(ctx context.Context, id int64) (bool, error) {
 	count, err := dao.Users.Ctx(ctx).Where(do.Users{
 		Id: id,

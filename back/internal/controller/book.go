@@ -13,6 +13,7 @@ var Book = cBook{}
 
 func (b cBook) QueryBooksByCategory(ctx context.Context, req *v1.BookQueryByCategoryReq) (res *v1.BookQueryByCategoryRes, err error) {
 	err, g := service.Book().Query(ctx, model.BookQueryInfo{
+		Page:     req.Page,
 		Category: req.Category,
 	})
 	if err != nil {

@@ -29,3 +29,12 @@ func (o cOrder) UpdateStatusCompleted(ctx context.Context, req *v1.OrderUpdateSt
 	err = service.Order().UpdateStatus(ctx, model.OrderUpdate{OId: req.Id, Status: consts.OrderCompleted})
 	return
 }
+
+func (o cOrder) QueryAll(ctx context.Context, req *v1.OrderQueryAllReq) (res *v1.OrderQueryAllRes, err error) {
+	all, err := service.Order().QueryAll(ctx, model.OrderQueryAll{Page: req.Page})
+	if err != nil {
+		return nil, err
+	}
+	res = &v1.OrderQueryAllRes{Data: all}
+	return
+}

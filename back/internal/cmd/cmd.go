@@ -28,6 +28,7 @@ var (
 				group.Bind(
 					controller.User,
 					controller.Book,
+					controller.Category,
 				)
 
 				group.Middleware(

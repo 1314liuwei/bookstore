@@ -1,6 +1,7 @@
 package service
 
 import (
+	"back/internal/consts"
 	"back/internal/model"
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
@@ -51,9 +52,21 @@ func (b sBook) Query(ctx context.Context, in model.BookQueryInfo) (error, gdb.Re
 		query.Author = in.Author
 	}
 
-	all, err := dao.Books.Ctx(ctx).WhereOr(query).All()
-	if err != nil {
-		return err, nil
+	var (
+		all gdb.Result
+		err error
+	)
+
+	if query.Category == consts.AllCagetory {
+		all, err = dao.Books.Ctx(ctx).Page(in.Page, consts.Limit).All()
+		if err != nil {
+			return err, nil
+		}
+	} else {
+		all, err = dao.Books.Ctx(ctx).WhereOr(query).Page(in.Page, consts.Limit).All()
+		if err != nil {
+			return err, nil
+		}
 	}
 
 	return nil, all

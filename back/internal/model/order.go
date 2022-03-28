@@ -19,3 +19,7 @@ type OrderUpdate struct {
 type OrderQuery struct {
 	OId int64
 }
+
+type OrderQueryAll struct {
+	Page int
+}

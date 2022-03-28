@@ -24,7 +24,7 @@ type UserSignUpRes struct{}
 type UserSignInReq struct {
 	g.Meta   `path:"/user/sign_in" method:"POST" tags:"User" summary:"Sign in with exists account"`
 	Username string `v:"required"`
-	Password string `v:"required|password"`
+	Password string `v:"required"`
 }
 type UserSignInRes struct{}
 

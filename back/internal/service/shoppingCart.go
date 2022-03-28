@@ -45,6 +45,18 @@ func (s *sShoppingCart) AddBook(ctx context.Context, in model.ShoppingCartChange
 	}
 
 	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+		all, err := dao.ShoppingCarts.Ctx(ctx).
+			Fields(dao.ShoppingCarts.Columns().BookShoppingCart).
+			Where(do.ShoppingCarts{UserShoppingCart: userId}).All()
+		if err != nil {
+			return err
+		}
+
+		var raw []int
+		for _, record := range all {
+			raw = append(raw, gconv.Int(record[dao.ShoppingCarts.Columns().BookShoppingCart]))
+		}
+
 		temp := make(map[int]struct{})
 		for _, id := range in.BookIds {
 			// 去除重复值
