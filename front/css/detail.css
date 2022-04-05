@@ -1,0 +1,33 @@
+#content{
+    width: 1200px;
+    margin: 20px auto;
+    display: flex;
+}
+#content>.show{
+    width: 500px;
+    height: 500px;
+    border: 1px solid ;
+}
+#content>.info{
+    flex: 1;
+    box-sizing: border-box;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+#content>.info>.title{
+    font-size: 20px;
+    font-weight: 700;
+}
+#content>.info>.price{
+    font-size: 30px;
+    color: red;
+}
+#content>.info>button{
+    padding: 10px;
+    font-size: 20px;
+    background-color: #9999FF;
+    color: white;
+    cursor: pointer;
+}

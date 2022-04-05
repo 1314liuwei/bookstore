@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <script src="../vuejs/vue.global.js"></script>
+    <script src="../axios.js"></script>
+    
+    
+</head>
+<body>
+    <!-- <img src="../img/780.jpg" style="width: auto; height: 50px; margin: 30px auto;"> -->
+    <div class="header">
+        登录
+    </div>
+    <form id="login" >
+        <p>用户登录</p>
+        <hr>
+        <label>
+            <input type="text" placeholder="请输入账号" v-model="name">
+        </label>
+        <label>
+            <input type="text" placeholder="请输入密码" v-model="pwd">
+        </label>
+        <a href="../html/register.html" style="color: black; ">点击注册</a>
+        <button @click.prevent="handleLogin">登录</button>
+    </form>
+    
+
+    <script src="../js/login.js" ></script>
+    
+</body>
+</html>

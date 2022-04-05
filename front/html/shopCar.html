@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../vuejs/vue.js"></script>
+    <script src="../jQuery/jquery-3.6.0.js"></script>
+    <script src="../axios.js"></script>
+    
+    <title>购物车</title>
+</head>
+
+<body>
+
+    <ul class="list" id="goods">
+        <li v-for="(item,index) in goodsList" @click="handleDetail(item)">
+            <div class="cover">
+                <img :src="item.cover">
+            </div>
+            <div class="info">
+                <p class="title">{{item.name}}</p>
+                <p class="price">￥ {{item.price}}</p>
+                <button @click.stop="handleShopping">加入购物车</button>
+            </div>
+        </li>
+    </ul>
+    
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="25%">商品名称</th>
+                <th width="25%">商品</th>
+                <th width="25%">价格</th>
+                <th width="25%">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Tanmay</td>
+                <td>Bangalore</td>
+                <td>560001</td>
+                <td>560001</td>
+            </tr>
+            <tr>
+                <td>Sachin</td>
+                <td>Mumbai</td>
+                <td>400003</td>
+                <td>560001</td>
+            </tr>
+            <tr>
+                <td>Uma</td>
+                <td>Pune</td>
+                <td>411027</td>
+                <td>560001</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="../js/index.js"></script>
+
+
+    <!-- <div id="content">
+        <table width="95%" border="0" class="table table-striped">
+            <caption>
+                <p align="left">购物车（全部3）</p>
+            </caption>
+            <thead height="70">
+                <th>
+                    <input id="allCheckBox" type="checkbox" value="全选" />全选
+                </th>
+                <th width="25%"> 商品信息</th>
+                <th width="20%">&nbsp;</th>
+                <th width="10%">单价</th>
+                <th width="10%">数量</th>
+                <th width="10%">金额</th>
+                <th width="10%">操作</th>
+            </thead>
+
+            <tbody>
+                <tr height="50">
+                    <td>店铺：<a
+                            href="https://stylenanda3ce.tmall.com/shop/view_shop.htm?spm=a1z0d.6639537.1997196601.77.7b207484vHbnNJ&user_number_id=4260076097">
+                            3CE官方旗舰店</a></td>
+                    <td colspan="6">优惠券</td>
+                </tr>
+                <tr bgcolor="D3D3D3" height="150">
+                    <td>
+                        <input id="checkbox1" type="checkbox" value="选择" />
+                        <img src="images/3ce1.png" width="100px">
+                    </td>
+                    <td>
+                        <a
+                            href="https://detail.tmall.com/item.htm?spm=a1z0d.6639537.1997196601.80.7b207484vHbnNJ&id=631873305236&sku_properties=122276315:3289490">
+                            【直播节热卖】3CE丝绒唇釉唇泥 雾面显白保湿哑光慕斯口红玳瑁色 </a>
+                    </td>
+                    <td>
+                        颜色分类：【热卖色】丝绒唇釉#DAFFODIL 「豆沙红」
+                        款式：基本款
+                    </td>
+                    <td>￥110.00</td>
+                    <td>1</td>
+                    <td>
+                        <input id="num1" type="text" value="110.00" readonly />
+                    </td>
+                    <td><a href="#">移入收藏夹</a><br>
+                        <a href="#">删除</a></td>
+                </tr>
+            </tbody>
+
+            <tbody>
+                <tr height="50">
+                    <td>店铺：<a
+                            href="https://chioture.tmall.com/shop/view_shop.htm?spm=a1z0d.6639537.1997196601.363.7b207484vHbnNJ&user_number_id=776151038">
+                            稚优泉化妆品旗舰店</a></td>
+                    <td colspan="6">优惠券</td>
+                </tr>
+                <tr bgcolor="D3D3D3" height="150">
+                    <td>
+                        <input id="checkbox2" type="checkbox" value="选择" />
+                        <img src="images/zhiyouquan.png" width="100px">
+                    </td>
+                    <td>
+                        <a
+                            href="https://detail.tmall.com/item.htm?spm=a1z0d.6639537.1997196601.366.7b207484vHbnNJ&id=566736402567">
+                            稚优泉卸妆水眼唇脸三合一卸妆乳油膏敏感肌专用脸部温和清洁正品</a>
+                    </td>
+                    <td>
+                        净含量：300ml
+                    </td>
+                    <td>￥59.90</td>
+                    <td>2</td>
+                    <td>
+                        <input id="num2" type="text" value="119.80" readonly />
+                    </td>
+                    <td><a href="#">移入收藏夹</a><br>
+                        <a href="#">删除</a></td>
+                </tr>
+            </tbody>
+
+            <tbody>
+                <tr height="50">
+                    <td>店铺：<a
+                            href="https://shop141214248.taobao.com/shop/view_shop.htm?spm=a1z0d.6639537.1997196601.1.7b207484p2WKyN&user_number_id=2708019236">
+                            文文包袋厂</a></td>
+                    <td colspan="6">优惠券</td>
+                </tr>
+                <tr bgcolor="D3D3D3" height="150">
+                    <td>
+                        <input id="checkbox3" type="checkbox" value="选择" />
+                        <img src="images/bag.png" width="100px">
+                    </td>
+                    <td>
+                        <a
+                            href="https://item.taobao.com/item.htm?spm=a1z0d.6639537.1997196601.4.7b207484p2WKyN&id=595241703012">
+                            【新势力周】大容量书包女韩版高中森系可爱简约日系双肩包女学生ins校园原宿 </a>
+                    </td>
+                    <td>
+                        颜色分类：灰色小号 不带蛙哥 放14寸电脑
+                    </td>
+                    <td>￥49.00</td>
+                    <td>1</td>
+                    <td>
+                        <input id="num1" type="text" value="49.00" readonly />
+                    </td>
+                    <td><a href="#">移入收藏夹</a><br>
+                        <a href="#">删除</a></td>
+                </tr>
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td height="130" colspan="2" align="left">
+                        <input id="allCheck" type="checkbox" value="全选" />全选&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#">移入收藏夹</a>&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;<a href="#">删除</a></td>
+                    </td>
+                    <td colspan="5" align="right">
+                        已选商品
+                        <input type="text" value="0" readonly>件&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        合计（不含运费）:<input type="text" value="0.00" readonly> 元
+                        <a
+                            href="https://buy.tmall.com/order/confirm_order.htm?spm=a1z0d.6639537.0.0.undefined">结算</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+
+
+    <div id="list">
+        <p align="center">关于淘宝 &nbsp;帮助中心 &nbsp;开放平台 &nbsp;诚聘英才 &nbsp;联系我们 &nbsp;网站合作 &nbsp;法律声明 &nbsp;隐私权政策 &nbsp;知识产权
+            &nbsp;廉正举报 &nbsp;规则意见征集</p>
+        <p align="center">阿里巴巴集团&nbsp;|&nbsp; 淘宝网 &nbsp;|&nbsp; 天猫 &nbsp;|&nbsp; 聚划算 &nbsp;|&nbsp; 全球速卖通 &nbsp;|&nbsp;
+            阿里巴巴国际交易市场&nbsp;|&nbsp; 1688 &nbsp;|&nbsp; 阿里妈妈 &nbsp;|&nbsp; 飞猪 &nbsp;|&nbsp; 阿里云计算 &nbsp;|&nbsp; AliOS
+            &nbsp;|&nbsp; 阿里通信 &nbsp;|&nbsp; 万网 &nbsp;|&nbsp; 高德 &nbsp;|&nbsp; UC &nbsp;|&nbsp; 友盟 &nbsp;|&nbsp; 虾米
+            &nbsp;|&nbsp; 钉钉 &nbsp;|&nbsp; 支付宝</p>
+        <p align="center">增值电信业务经营许可证： 浙B2-20110446</p>
+        <p align="center">网络文化经营许可证：浙网文[2015]0295-065号</p>
+        <p align="center">12318举报</p>
+        <p align="center">出版物网络交易平台服务经营备案证： 新出发浙备字第001号</p>
+        <p align="center">互联网违法和不良信息举报电话：0571-81683755 blxxjb@alibaba-inc.com</p>
+        <p align="center">互联网药品信息服务资质证书编号：浙-（经营性）-2017-0005</p>
+        <p align="center">浙公网安备 33010002000120号</p>
+        <p align="center">（浙）网械平台备字[2018]第00002号</p>
+        <p align="center">&nbsp;2003-2019&nbsp;TMALL.COM&nbsp;版权所有</p>
+    </div> -->
+</body>
+
+</html>

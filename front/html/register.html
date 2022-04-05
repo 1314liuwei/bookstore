@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+    
+</head>
+
+<body>
+    <div class="header">
+        注册
+    </div>
+    <form id="register">
+        <p>用户注册</p>
+        <hr>
+        <label>
+            <input type="text" placeholder="请输入账号" v-model="username">
+        </label>
+        <label>
+            <input type="text" placeholder="请输入密码" v-model="password">
+        </label>
+        <label>
+            <input type="text" placeholder="请确认密码" v-model="confirm">
+        </label>
+        <!-- <label>
+            <input type="text" placeholder="请输入昵称">
+        </label> -->
+        
+        <button @click.prevent="handleRegister">注册</button>
+    </form>
+    
+
+    <script src="../jQuery/jquery-3.6.0.js"></script>
+    <script src="../axios.js"></script>
+    <script src="../vuejs/vue.global.js"></script>
+    <script src="../js/register.js"></script>
+</body>
+</html>

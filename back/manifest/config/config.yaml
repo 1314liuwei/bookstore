@@ -1,23 +1,29 @@
 # Cli.
 gfcli:
-    gen:
-        dao:
-            -   link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
-                descriptionTag: true
-                noModelComment: true
+  gen:
+    dao:
+      - link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
+        descriptionTag: true
+        noModelComment: true
 
 # Database.
 database:
-    logger:
-        level: "all"
-        stdout: true
+  logger:
+    level: "all"
+    stdout: true
 
-    default:
-        link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
-        debug: true
+  default:
+    link: "mysql:root:104494lw!@tcp(116.62.229.23:3306)/bookstore?parseTime=True"
+    debug: true
 
 server:
-    address:             ":8080"
-    dumpRouterMap:       true
-    routeOverWrite:      true
-    accessLogEnabled:    true
+  address: ":8080"
+  dumpRouterMap: true
+  routeOverWrite: true
+
+#  accessLogEnabled: true
+#  errorLogEnabled  :true
+#  log-path: "./log/ServerLog"
+#  session_Id_Name: "MySessionId"
+#  Session-path: "./temp/MySessionStoragePath"
+#  session_MaxAge: "24h"

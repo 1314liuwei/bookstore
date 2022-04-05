@@ -1,0 +1,118 @@
+.filterBox{
+    width: 1200px;
+    margin: 20px auto;
+    border: 1px solid #FFCC33;
+    /* box-sizing: border-box; */
+    padding: 10px;
+}
+.filterBox>.content{
+    display: flex;
+    margin-top: 10px;
+}
+.filterBox>.content>p{
+    width: 120px;
+    font-size: 20px;
+    text-align: center;
+    
+}
+.filterBox>.content>ul{
+    flex:1;
+    display: flex;
+    flex-wrap: wrap;
+}
+.filterBox>.content>ul>li{
+    padding: 5px 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.filterBox>.content>ul>li:hover,
+.filterBox>.content>ul>li.active{
+    background-color: #9999FF;
+    color: #fff;
+}
+.filterBox>.content>input{
+    font-size: 20px;
+    height: 30px;
+    padding-left: 20px;
+}
+.filterBox>.content>span{
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.filterBox>.content>span.left,
+.filterBox>.content>span.right{
+    background-color: #9999FF;
+    color: white;
+}
+.filterBox>.content>span.disable{
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+.filterBox>.content>input.page{
+    width: 50px;
+    text-align: center;
+    padding-left: 0;
+    margin-left: 20px;
+}
+
+.filterBox>.content>button{
+    font-size: 20px;
+    padding: 0 5px;
+    cursor: pointer;
+}
+
+.filterBox>.content>span.disable{
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.list{
+    width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.list>li{
+    background-color: #fff;
+    width: 280px;
+    border: 1px solid #FFCC33;
+    height: 450px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.list>li>.cover{
+    width: 280px;
+    height: 280px;
+
+}
+.list>li>.info{
+    box-sizing: border-box;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.list>li>.info>p.price{
+    font-size: 18px;
+    color: red;
+}
+.list>li>.info>p.title{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.list>li>.info>button{
+    padding: 10px;
+    color: #fff;
+    background-color: #9999FF;
+    font-size: 20px;
+    cursor: pointer;
+}
