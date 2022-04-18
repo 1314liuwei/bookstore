@@ -12,3 +12,7 @@ type ContextUser struct {
 	Username string
 	Type     string
 }
+
+type JWTContext struct {
+	User *ContextUser
+}

@@ -26,7 +26,9 @@ type UserSignInReq struct {
 	Username string `v:"required"`
 	Password string `v:"required"`
 }
-type UserSignInRes struct{}
+type UserSignInRes struct {
+	Token string `json:"token"`
+}
 
 type UserSignOutReq struct {
 	g.Meta `path:"/user/sign_out" method:"POST" tags:"User" summary:"Sign out of account"`

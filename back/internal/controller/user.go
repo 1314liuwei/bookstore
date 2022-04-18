@@ -20,10 +20,14 @@ func (u cUser) SignUp(ctx context.Context, req *v1.UserSignUpReq) (res *v1.UserS
 }
 
 func (u cUser) SignIn(ctx context.Context, req *v1.UserSignInReq) (res *v1.UserSignInRes, err error) {
-	err = service.User().SignIn(ctx, model.UserInput{
+	token, err := service.User().SignIn(ctx, model.UserInput{
 		Username: req.Username,
 		Password: req.Password,
 	})
+
+	res = &v1.UserSignInRes{
+		Token: token,
+	}
 	return
 }
 

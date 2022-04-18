@@ -23,13 +23,13 @@ func (c sContext) Init(r *ghttp.Request, customCtx *model.Context) {
 	r.SetCtxVar(consts.ContextKey, customCtx)
 }
 
-func (c sContext) Get(ctx context.Context) *model.Context {
+func (c sContext) Get(ctx context.Context) *model.JWTContext {
 	value := ctx.Value(consts.ContextKey)
 	if value == nil {
 		return nil
 	}
 
-	if m, ok := value.(*model.Context); ok {
+	if m, ok := value.(*model.JWTContext); ok {
 		return m
 	}
 	return nil

@@ -17,11 +17,11 @@ var (
 		Brief: "start http server of bookstore",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
-			s.Use(service.Middleware().CORS)
+			s.Use(ghttp.MiddlewareCORS)
 
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(
-					service.Middleware().Ctx,
+					//service.Middleware().Ctx,
 					ghttp.MiddlewareHandlerResponse,
 				)
 

@@ -17,10 +17,10 @@ var obj = {
                 axios.defaults.withCredentials = true
                 console.log(document.cookie)
                 if (res.data.code === 0) {
-                    // console.log(res)
-                    // window.localStorage.setItem('flag', true)
-                    // window.localStorage.setItem('name',this.name)
-                    // location.href = './index.html'
+                    console.log(res)
+                    window.localStorage.setItem('flag', true)
+                    window.localStorage.setItem('name',this.name)
+                    location.href = './index.html'
                 } else {
                     alert("请检查用户名和密码是否输入正确")
                 }

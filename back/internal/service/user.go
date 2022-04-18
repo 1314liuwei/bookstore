@@ -51,43 +51,59 @@ func (u *sUser) SignUp(ctx context.Context, in model.UserInput) (err error) {
 	})
 }
 
-func (u sUser) SignIn(ctx context.Context, in model.UserInput) (err error) {
+func (u sUser) SignIn(ctx context.Context, in model.UserInput) (token string, err error) {
 	var user *entity.Users
 	err = dao.Users.Ctx(ctx).Where(do.Users{
 		Username: in.Username,
 		Password: in.Password,
 	}).Scan(&user)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if user == nil {
-		return gerror.New(`Password not correct`)
+		return "", gerror.New(`Password not correct`)
 	}
 
-	if err = Session().SetUser(ctx, user); err != nil {
-		return err
-	}
+	//if err = Session().SetUser(ctx, user); err != nil {
+	//	return err
+	//}
+	//
+	//Context().SetUser(ctx, &model.ContextUser{
+	//	Id:       user.Id,
+	//	Username: user.Username,
+	//	Type:     user.Type,
+	//})
+	//
+	//ghttp.RequestFromCtx(ctx).Cookie.SetHttpCookie(&http.Cookie{
+	//	SameSite: http.SameSiteNoneMode,
+	//	Secure:   true,
+	//})
 
-	Context().SetUser(ctx, &model.ContextUser{
-		Id:       user.Id,
-		Username: user.Username,
-		Type:     user.Type,
+	token, err = JWT().Generate(model.JWTContext{
+		User: &model.ContextUser{
+			Id:       user.Id,
+			Type:     user.Type,
+			Username: user.Username,
+		},
 	})
+	if err != nil {
+		return "", err
+	}
 	return
 }
 
 func (u sUser) SignOut(ctx context.Context) error {
-	return Session().RemoveUser(ctx)
+	return nil
 }
 
 func (u sUser) GetProfile(ctx context.Context) *entity.Users {
-	return Session().GetUser(ctx)
+	return nil
 }
 
 func (u sUser) UpgradeVIP(ctx context.Context) (err error) {
 	var user *entity.Users
-	user = Session().GetUser(ctx)
+	user = nil
 	if user == nil {
 		return gerror.New(`Session error`)
 	}

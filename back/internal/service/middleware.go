@@ -1,7 +1,7 @@
 package service
 
 import (
-	"back/internal/model"
+	"back/internal/consts"
 	"net/http"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -20,32 +20,35 @@ func Middleware() *sMiddleware {
 	return &insMiddleware
 }
 
-func (m sMiddleware) Ctx(r *ghttp.Request) {
-	customCtx := &model.Context{
-		Session: r.Session,
-	}
-	Context().Init(r, customCtx)
-	if user := Session().GetUser(r.Context()); user != nil {
-		customCtx.User = &model.ContextUser{
-			Id:       user.Id,
-			Username: user.Username,
-			Type:     user.Type,
-		}
-	}
-
-	r.Middleware.Next()
-}
+//func (m sMiddleware) Ctx(r *ghttp.Request) {
+//	customCtx := &model.Context{
+//		Session: r.Session,
+//	}
+//	Context().Init(r, customCtx)
+//	if user := Session().GetUser(r.Context()); user != nil {
+//		customCtx.User = &model.ContextUser{
+//			Id:       user.Id,
+//			Username: user.Username,
+//			Type:     user.Type,
+//		}
+//	}
+//
+//	r.Middleware.Next()
+//}
 
 func (m sMiddleware) Auth(r *ghttp.Request) {
-	user := Session().GetUser(r.Context())
-	if user == nil || user.Id == 0 {
+	token := r.Header.Get("Authorization")
+	parse, err := JWT().Parse(token)
+	if err != nil {
 		r.Response.WriteStatusExit(http.StatusForbidden, g.Map{
 			"code": http.StatusForbidden,
 			"data": "",
-			"msg":  "Invalid cookie",
+			"msg":  err.Error(),
 		})
+	} else {
+		r.SetCtxVar(consts.ContextKey, &parse)
+		r.Middleware.Next()
 	}
-	r.Middleware.Next()
 }
 
 func (m sMiddleware) CORS(r *ghttp.Request) {
