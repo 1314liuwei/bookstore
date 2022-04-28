@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="go build back" type="GoApplicationRunConfiguration" factoryName="Go Application" singleton="false" nameIsGenerated="true">
     <module name="back" />
-    <target name="@@@LOCAL@@@" />
+    <target name="root@116.62.229.23:22" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-o back" />
     <kind value="DIRECTORY" />

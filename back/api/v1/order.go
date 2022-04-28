@@ -27,7 +27,7 @@ type OrderUpdateStatusCompletedReq struct {
 type OrderUpdateStatusCompletedRes struct{}
 
 type OrderQueryAllReq struct {
-	g.Meta `path:"/order/remove" method:"POST" tags:"Order" summary:"Query all orders"`
+	g.Meta `path:"/order/all" method:"GET" tags:"Order" summary:"Query all orders"`
 	Page   int `default:"1"`
 }
 type OrderQueryAllRes struct {

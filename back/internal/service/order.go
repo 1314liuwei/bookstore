@@ -49,15 +49,21 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 				temp[data.BookId] = struct{}{}
 			}
 
+			one, err := dao.Books.Ctx(ctx).Where(do.Books{Id: data.BookId}).One()
+			if err != nil {
+				return err
+			}
+
 			// 当前订单号
 			oid := time.Now().UnixMilli()
 			// 将订单号加入结果列表
 			result = append(result, oid)
-			_, err := dao.Orders.Ctx(ctx).Data(do.Orders{
+			_, err = dao.Orders.Ctx(ctx).Data(do.Orders{
 				Oid:       oid,
 				Status:    consts.OrderToBePaid,
 				BookOrder: data.BookId,
 				UserOrder: userId,
+				Ebook:     one[dao.Books.Columns().Ebook],
 			}).Insert()
 			if err != nil {
 				return err
