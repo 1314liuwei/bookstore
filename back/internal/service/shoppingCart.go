@@ -5,8 +5,10 @@ import (
 	"back/internal/service/internal/dao"
 	"back/internal/service/internal/do"
 	"context"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -88,7 +90,7 @@ func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartCha
 		return gerror.New("User does not exist")
 	}
 
-	return dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
+	err := dao.ShoppingCarts.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		temp := make(map[int]struct{})
 
 		for _, id := range in.BookIds {
@@ -114,6 +116,12 @@ func (s *sShoppingCart) RemoveBook(ctx context.Context, in model.ShoppingCartCha
 		}
 		return nil
 	})
+	if err != nil {
+		g.Dump(err)
+		return err
+	}
+
+	return nil
 }
 
 func (s *sShoppingCart) Empty(ctx context.Context, in model.ShoppingCartChangeBook) error {

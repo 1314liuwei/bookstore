@@ -2,13 +2,13 @@ package v1
 
 import (
 	"back/internal/model"
-	"github.com/gogf/gf/v2/database/gdb"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 type OrderCreateReq struct {
 	g.Meta `path:"/order/create" method:"POST" tags:"Order" summary:"Create an order"`
-	Data   []model.OrderBookInfo `v:"required"`
+	Data   []int `v:"required"`
 }
 type OrderCreateRes struct {
 	OIds []int64 `v:"required" json:"order_id"`
@@ -31,5 +31,5 @@ type OrderQueryAllReq struct {
 	Page   int `default:"1"`
 }
 type OrderQueryAllRes struct {
-	Data gdb.Result
+	Data []model.OrderQueryAllOutput
 }

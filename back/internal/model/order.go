@@ -1,7 +1,7 @@
 package model
 
 type Order struct {
-	Data []OrderBookInfo
+	Data []int
 }
 type OrderBookInfo struct {
 	BookId int `json:"book"`
@@ -22,4 +22,18 @@ type OrderQuery struct {
 
 type OrderQueryAll struct {
 	Page int
+}
+
+type OrderQueryAllOutput struct {
+	Price     float64 `json:"price"`
+	BookImage string  `json:"bookImage"`
+	BookName  string  `json:"bookName"`
+	BookID    int     `json:"book_id"`
+	CreatedAt string  `json:"created_at"`
+	Ebook     string  `json:"ebook"`
+	Id        int     `json:"id"`
+	Oid       int64   `json:"oid"`
+	Status    string  `json:"status"`
+	UpdateAt  string  `json:"update_at"`
+	UserOrder int     `json:"user_order"`
 }

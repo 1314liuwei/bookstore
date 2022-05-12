@@ -29,6 +29,7 @@ var (
 					controller.User,
 					controller.Book,
 					controller.Category,
+					controller.EBook,
 				)
 
 				group.Middleware(
@@ -39,7 +40,6 @@ var (
 				group.Bind(
 					controller.Order,
 					controller.ShoppingCart,
-					controller.EBook,
 				)
 			})
 

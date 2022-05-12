@@ -38,10 +38,8 @@ func Middleware() *sMiddleware {
 
 func (m sMiddleware) Auth(r *ghttp.Request) {
 	token := r.Header.Get("Authorization")
-	g.Dump(token)
 
 	parse, err := JWT().Parse(token)
-	g.Dump(parse)
 	if err != nil {
 		r.Response.WriteStatusExit(http.StatusForbidden, g.Map{
 			"code": http.StatusForbidden,

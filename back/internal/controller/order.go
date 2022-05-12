@@ -13,10 +13,9 @@ type cOrder struct{}
 var Order = cOrder{}
 
 func (o cOrder) Create(ctx context.Context, req *v1.OrderCreateReq) (res *v1.OrderCreateRes, err error) {
-	oid, err := service.Order().Created(ctx, model.Order{
+	err = service.Order().Created(ctx, model.Order{
 		Data: req.Data,
 	})
-	res = &v1.OrderCreateRes{OIds: oid}
 	return
 }
 

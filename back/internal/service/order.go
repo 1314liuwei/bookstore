@@ -10,6 +10,7 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type (
@@ -24,16 +25,16 @@ func Order() *sOrder {
 	return &insOrder
 }
 
-func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
+func (o sOrder) Created(ctx context.Context, in model.Order) error {
 	userId := Context().Get(ctx).User.Id
 	if ok, err := o.IsUserExist(ctx, userId); !ok || err != nil {
-		return nil, gerror.New("User does not exist")
+		return gerror.New("User does not exist")
 	}
 
 	// 检查 book 是否有效
 	for _, i := range in.Data {
-		if ok, err := o.IsBookExist(ctx, int64(i.BookId)); !ok || err != nil {
-			return nil, gerror.New("Book does not exist")
+		if ok, err := o.IsBookExist(ctx, int64(i)); !ok || err != nil {
+			return gerror.New("Book does not exist")
 		}
 	}
 
@@ -42,14 +43,14 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 	err := dao.Orders.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		temp := make(map[int]struct{})
 
-		for _, data := range in.Data {
-			if _, ok := temp[data.BookId]; ok {
+		for _, id := range in.Data {
+			if _, ok := temp[id]; ok {
 				continue
 			} else {
-				temp[data.BookId] = struct{}{}
+				temp[id] = struct{}{}
 			}
 
-			one, err := dao.Books.Ctx(ctx).Where(do.Books{Id: data.BookId}).One()
+			one, err := dao.Books.Ctx(ctx).Where(do.Books{Id: id}).One()
 			if err != nil {
 				return err
 			}
@@ -61,7 +62,7 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 			_, err = dao.Orders.Ctx(ctx).Data(do.Orders{
 				Oid:       oid,
 				Status:    consts.OrderToBePaid,
-				BookOrder: data.BookId,
+				BookOrder: id,
 				UserOrder: userId,
 				Ebook:     one[dao.Books.Columns().Ebook],
 			}).Insert()
@@ -72,10 +73,10 @@ func (o sOrder) Created(ctx context.Context, in model.Order) ([]int64, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return result, nil
+	return nil
 }
 
 func (o sOrder) Remove(ctx context.Context, in model.OrderRemove) error {
@@ -121,12 +122,36 @@ func (o sOrder) Query(ctx context.Context, in model.OrderQuery) (gdb.Result, err
 	return all, nil
 }
 
-func (o sOrder) QueryAll(ctx context.Context, in model.OrderQueryAll) (gdb.Result, error) {
+func (o sOrder) QueryAll(ctx context.Context, in model.OrderQueryAll) ([]model.OrderQueryAllOutput, error) {
 	all, err := dao.Orders.Ctx(ctx).Page(in.Page, consts.Limit).All()
 	if err != nil {
 		return nil, err
 	}
-	return all, nil
+
+	var data []model.OrderQueryAllOutput
+	for _, record := range all {
+		one, err := dao.Books.Ctx(ctx).Where(do.Books{Id: record[dao.Orders.Columns().BookOrder]}).One()
+		if err != nil {
+			return nil, err
+		}
+
+		temp := model.OrderQueryAllOutput{
+			Price:     gconv.Float64(one[dao.Books.Columns().Price]),
+			BookImage: gconv.String(one[dao.Books.Columns().Cover]),
+			BookName:  gconv.String(one[dao.Books.Columns().Name]),
+			BookID:    gconv.Int(one[dao.Books.Columns().Id]),
+
+			CreatedAt: gconv.String(record[dao.Orders.Columns().CreatedAt]),
+			Ebook:     gconv.String(record[dao.Orders.Columns().Ebook]),
+			Id:        gconv.Int(record[dao.Orders.Columns().Id]),
+			Oid:       gconv.Int64(record[dao.Orders.Columns().Oid]),
+			Status:    gconv.String(record[dao.Orders.Columns().Status]),
+			UpdateAt:  gconv.String(record[dao.Orders.Columns().UpdateAt]),
+			UserOrder: gconv.Int(record[dao.Orders.Columns().UserOrder]),
+		}
+		data = append(data, temp)
+	}
+	return data, nil
 }
 
 func (o sOrder) IsUserExist(ctx context.Context, id int64) (bool, error) {

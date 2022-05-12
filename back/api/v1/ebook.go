@@ -5,8 +5,8 @@ import (
 )
 
 type EBookGetFileReq struct {
-	g.Meta `path:"/ebook/:file" method:"GET" tags:"EBook" summary:"Get an ebook file"`
-	File   string `path:"file" v:"required"`
+	g.Meta `path:"/ebook" method:"GET" tags:"EBook" summary:"Get an ebook file"`
+	File   string `p:"file" v:"required"`
 }
 type EBookGetFileRes struct {
 }
